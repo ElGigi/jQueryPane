@@ -52,8 +52,8 @@ const PaneManager = (($) => {
     WRAPPER: '.pane-wrapper:first',
     LOADER: '.pane-loader',
     PANE: '.pane',
-    FORM: '.pane form:not([target])',
-    SUBMIT: '.pane form:not([target]) :submit[name]',
+    FORM: 'form:not([target])',
+    SUBMIT: 'form:not([target]) :submit[name]',
     DATA_TOGGLE: '[data-toggle="pane"]',
     DATA_DISMISS: '[data-dismiss="pane"]',
   }
