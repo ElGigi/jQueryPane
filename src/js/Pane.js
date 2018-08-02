@@ -25,6 +25,7 @@ const PaneManager = (($) => {
   const Default = {
     debug: false,
     container: 'body',
+    loader: '',
     transitionInTime: 50,
     transitionOutTime: 400
   }
@@ -307,8 +308,6 @@ const PaneManager = (($) => {
                                dataType: 'json'
                              })
                 }
-
-                return false
               })
     }
 
@@ -320,7 +319,7 @@ const PaneManager = (($) => {
 
         if ($loader.length === 0) {
           $loader = $('<div class="pane-loader"></div>')
-          $loader.append(this._manager.config('loader_content'))
+          $loader.append(this._manager.config('loader'))
           $(this._element).prepend($loader)
         }
       } else {

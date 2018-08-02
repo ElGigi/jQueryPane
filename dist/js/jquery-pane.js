@@ -94,6 +94,7 @@
     var Default = {
       debug: false,
       container: 'body',
+      loader: '',
       transitionInTime: 50,
       transitionOutTime: 400
       /**
@@ -373,8 +374,6 @@
                 dataType: 'json'
               });
             }
-
-            return false;
           });
         }
       }, {
@@ -387,7 +386,7 @@
 
             if ($loader.length === 0) {
               $loader = $$$1('<div class="pane-loader"></div>');
-              $loader.append(this._manager.config('loader_content'));
+              $loader.append(this._manager.config('loader'));
               $$$1(this._element).prepend($loader);
             }
           } else {
