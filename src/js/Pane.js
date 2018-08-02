@@ -210,6 +210,7 @@ const PaneManager = (($) => {
       }
 
       this._ajax({url: href})
+      this._href = href
     }
 
     close() {
@@ -270,7 +271,6 @@ const PaneManager = (($) => {
                 event.preventDefault()
 
                 let $form = $(this)
-                let $pane = $form.parents('.pane')
 
                 if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
                   // Get data of form
@@ -281,23 +281,13 @@ const PaneManager = (($) => {
                     formData.push(button)
                   }
 
-                  pane._ajax({})
-
                   // Form submission
-                  $.ajax($form.attr('action') || $pane.data('href') || '',
-                         {
-                           'method': $(this).attr('method') || 'get',
-                           'data': formData,
-                           'dataType': 'json',
-                           'success': function (data, textStatus, jqXHR) {
-                             // Event trigger
-                             $pane.trigger('loaded.content.pane', data, textStatus, jqXHR)
-                           },
-                           'error': function (jqXHR, textStatus, errorThrown) {
-                             // Event trigger
-                             $pane.trigger('error.content.pane', jqXHR, textStatus, errorThrown)
-                           }
-                         })
+                  pane._ajax({
+                               url: $(this).attr('action') || pane._href,
+                               method: $(this).attr('method') || 'get',
+                               data: formData,
+                               dataType: 'json'
+                             })
                 }
 
                 return false
