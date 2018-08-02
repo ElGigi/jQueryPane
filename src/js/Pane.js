@@ -167,6 +167,10 @@ const PaneManager = (($) => {
     // Public
 
     open(className) {
+      if (this._isTransitioning) {
+        return
+      }
+
       // Debug
       if (this._manager.config('debug')) {
         console.debug('Pane opened')
@@ -215,6 +219,10 @@ const PaneManager = (($) => {
     }
 
     close() {
+      if (this._isTransitioning) {
+        return
+      }
+
       let $pane = this._element,
         manager = this._manager
 
