@@ -1,3 +1,8 @@
+/*!
+  * jQuery Pane v1.0.0 (https://github.com/ElGigi/jQueryPane#readme)
+  * Copyright 2018 jQuery Pane Authors (https://github.com/ElGigi/jQueryPane/graphs/contributors)
+  * Licensed under MIT (https://github.com/ElGigi/jQueryPane/blob/master/LICENSE)
+  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jquery')) :
   typeof define === 'function' && define.amd ? define(['jquery'], factory) :
@@ -77,6 +82,7 @@
   }
 
   var PaneManager = function ($$$1) {
+    // Check jQuery requirements
     if (typeof $$$1 === 'undefined') {
       throw new TypeError('jQuery Pane requires jQuery. jQuery must be included before.');
     }
@@ -113,8 +119,8 @@
       WRAPPER: '.pane-wrapper:first',
       LOADER: '.pane-loader',
       PANE: '.pane',
-      FORM: '.pane form:not([target])',
-      SUBMIT: '.pane form:not([target]) :submit[name]',
+      FORM: 'form:not([target])',
+      SUBMIT: 'form:not([target]) :submit[name]',
       DATA_TOGGLE: '[data-toggle="pane"]',
       DATA_DISMISS: '[data-dismiss="pane"]'
       /**
@@ -161,15 +167,14 @@
         key: "_events",
         value: function _events() {
           var manager = this;
-          $$$1(document) //.off('click.pane', Selector.DATA_TOGGLE)
-          .on('click.pane', Selector.DATA_TOGGLE, function (event) {
+          $$$1(document).off('click.pane', Selector.DATA_TOGGLE).on('click.pane', Selector.DATA_TOGGLE, function (event) {
             event.preventDefault(); // Debug
 
             if (manager.config('debug')) {
               console.debug('Selector', Selector.DATA_TOGGLE, 'has been clicked');
             }
 
-            var pane = manager._newPane(this);
+            manager._newPane(this);
           });
         }
       }, {
@@ -238,7 +243,11 @@
       _createClass(Pane, [{
         key: "open",
         value: function open(className) {
-          // Debug
+          if (this._isTransitioning) {
+            return;
+          } // Debug
+
+
           if (this._manager.config('debug')) {
             console.debug('Pane opened');
           }
@@ -248,6 +257,8 @@
           if (typeof className === 'string') {
             $pane.addClass(className);
           }
+
+          this._isTransitioning = true;
 
           this._manager.wrapper.prepend(this._element);
 
@@ -278,10 +289,16 @@
           this._ajax({
             url: href
           });
+
+          this._href = href;
         }
       }, {
         key: "close",
         value: function close() {
+          if (this._isTransitioning) {
+            return;
+          }
+
           var $pane = this._element,
               manager = this._manager; // Event trigger
 
@@ -292,6 +309,7 @@
 
           if (!event.isPropagationStopped()) {
             // Animation
+            this._isTransitioning = true;
             $pane.removeClass('is-visible'); // After animation
 
             setTimeout(function () {
@@ -299,6 +317,7 @@
               manager.refresh(); // Event trigger
 
               $pane.trigger(Event.HIDDEN);
+              this._isTransitioning = false;
             }, 400);
           }
         } // Private
@@ -309,48 +328,35 @@
           var pane = this;
 
           this._element // Dismiss
-          //.off('click.pane', Selector.DATA_DISMISS)
-          .on('click.pane', Selector.DATA_DISMISS, function (event) {
+          .off('click.pane', Selector.DATA_DISMISS).on('click.pane', Selector.DATA_DISMISS, function (event) {
             event.preventDefault();
             pane.close(event);
           }) // Submit buttons
-          //.off('click.pane', Selector.SUBMIT)
-          .on('click.pane', Selector.SUBMIT, function (event) {
+          .off('click.pane', Selector.SUBMIT).on('click.pane', Selector.SUBMIT, function (event) {
             event.preventDefault();
             $$$1(this).parents('form').trigger('submit', {
               'name': $$$1(this).attr('name'),
               'value': $$$1(this).val()
             });
           }) // Submit form
-          //.off('submit.pane', Selector.FORM)
-          .on('submit.pane', Selector.FORM, function (event, button) {
+          .off('submit.pane', Selector.FORM).on('submit.pane', Selector.FORM, function (event, button) {
             event.preventDefault();
             var $form = $$$1(this);
-            var $pane = $form.parents('.pane');
 
-            if (!$$$1.isFunction($form.get(0).checkValidity) || $form.get(0).checkValidity()) {
+            if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
               // Get data of form
               var formData = $form.serializeArray(); // Add button
 
               if ($$$1.isPlainObject(button)) {
                 formData.push(button);
-              }
-
-              pane._ajax({}); // Form submission
+              } // Form submission
 
 
-              $$$1.ajax($form.attr('action') || $pane.data('href') || '', {
-                'method': $$$1(this).attr('method') || 'get',
-                'data': formData,
-                'dataType': 'json',
-                'success': function success(data, textStatus, jqXHR) {
-                  // Event trigger
-                  $pane.trigger('loaded.content.pane', data, textStatus, jqXHR);
-                },
-                'error': function error(jqXHR, textStatus, errorThrown) {
-                  // Event trigger
-                  $pane.trigger('error.content.pane', jqXHR, textStatus, errorThrown);
-                }
+              pane._ajax({
+                url: $$$1(this).attr('action') || pane._href,
+                method: $$$1(this).attr('method') || 'get',
+                data: formData,
+                dataType: 'json'
               });
             }
 
@@ -403,8 +409,6 @@
 
               pane._element.trigger(event);
 
-              console.log(pane._element);
-
               if (!event.isPropagationStopped()) {
                 pane._element.html(jqXHR.responseText);
 
@@ -412,8 +416,20 @@
               }
             },
             error: function error(jqXHR, textStatus, errorThrown) {
-              // Event trigger
-              pane._element.trigger(Event.LOADING_ERROR, pane._element, jqXHR, textStatus, errorThrown);
+              var event = $$$1.Event(Event.LOADING_ERROR, {
+                pane: pane._element,
+                paneAjax: {
+                  textStatus: textStatus,
+                  jqXHR: jqXHR,
+                  errorThrown: errorThrown
+                }
+              }); // Event trigger
+
+              pane._element.trigger(event);
+
+              if (!event.isPropagationStopped()) {
+                pane.close();
+              }
             },
             complete: function complete() {
               pane._jqXHR = null;
@@ -427,19 +443,8 @@
       }]);
 
       return Pane;
-    }(); ///**
-    // * jQuery
-    // */
-    //
-    //$(document)
-    //  .on(Event.)
+    }();
 
-
-    $$$1(document).on('click', '.pane', function (event) {
-      console.log('clickinternal');
-    }).on('loaded.content.pane', '.pane', function (event) {
-      console.log('internal');
-    });
     return function (config) {
       return new PaneManager(config);
     };
