@@ -179,6 +179,7 @@ const PaneManager = (($) => {
         $pane.addClass(className)
       }
 
+      this._isTransitioning = true
       this._manager.wrapper.prepend(this._element)
       this._manager.refresh()
 
@@ -223,6 +224,7 @@ const PaneManager = (($) => {
 
       if (!event.isPropagationStopped()) {
         // Animation
+        this._isTransitioning = true
         $pane.removeClass('is-visible')
 
         // After animation
@@ -233,6 +235,8 @@ const PaneManager = (($) => {
 
             // Event trigger
             $pane.trigger(Event.HIDDEN)
+
+            this._isTransitioning = false
           },
           400
         )
@@ -332,7 +336,7 @@ const PaneManager = (($) => {
                                 paneAjax: {
                                   data: data,
                                   textStatus: textStatus,
-                                  jqXHR: jqXHR
+                                  jqXHR: jqXHR,
                                 }
                               })
 
@@ -346,8 +350,21 @@ const PaneManager = (($) => {
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
+          let event = $.Event(Event.LOADING_ERROR,
+                              {
+                                pane: pane._element,
+                                paneAjax: {
+                                  textStatus: textStatus,
+                                  jqXHR: jqXHR,
+                                  errorThrown: errorThrown,
+                                }
+                              })
           // Event trigger
-          pane._element.trigger(Event.LOADING_ERROR, pane._element, jqXHR, textStatus, errorThrown)
+          pane._element.trigger(event)
+
+          if (!event.isPropagationStopped()) {
+            pane.close()
+          }
         },
         complete: function () {
           pane._jqXHR = null
