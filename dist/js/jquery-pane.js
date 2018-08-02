@@ -102,16 +102,20 @@
 
     };
     var Event = {
+      // Pane
+      SHOW: 'show.pane',
+      SHOWN: 'shown.pane',
+      HIDE: 'hide.pane',
+      HIDDEN: 'hidden.pane',
+      // Pane content
       LOADING: 'loading.content.pane',
       LOADED: 'loaded.content.pane',
       LOADING_ERROR: 'error.content.pane',
       PRINTED: 'printed.content.pane',
-      SUBMIT: 'submit.content.pane',
-      SUBMITTED: 'submitted.content.pane',
-      SHOW: 'show.pane',
-      SHOWN: 'shown.pane',
-      HIDE: 'hide.pane',
-      HIDDEN: 'hidden.pane'
+      // Selectors
+      CLICK_DISMISS: 'click.dismiss.pane',
+      CLICK_DATA_API: 'click.pane',
+      SUBMIT_DATA_API: 'submit.pane'
       /**
        * SELECTORS
        */
@@ -169,7 +173,7 @@
         key: "_events",
         value: function _events() {
           var manager = this;
-          $$$1(document).off('click.pane', Selector.DATA_TOGGLE).on('click.pane', Selector.DATA_TOGGLE, function (event) {
+          $$$1(document).off(Event.CLICK_DATA_API, Selector.DATA_TOGGLE).on(Event.CLICK_DATA_API, Selector.DATA_TOGGLE, function (event) {
             event.preventDefault(); // Debug
 
             if (manager.config('debug')) {
@@ -307,13 +311,13 @@
           var pane = this,
               manager = this._manager; // Event trigger
 
-          var event = $$$1.Event(Event.HIDE, {
+          var eventClose = $$$1.Event(Event.HIDE, {
             pane: pane._element
           });
 
-          pane._element.trigger(event);
+          pane._element.trigger(eventClose);
 
-          if (!event.isPropagationStopped()) {
+          if (!eventClose.isPropagationStopped()) {
             // Animation
             this._isTransitioning = true;
 
@@ -338,44 +342,36 @@
           var pane = this;
 
           this._element // Dismiss
-          .off('click.pane', Selector.DATA_DISMISS).on('click.pane', Selector.DATA_DISMISS, function (event) {
+          .off(Event.CLICK_DISMISS, Selector.DATA_DISMISS).on(Event.CLICK_DISMISS, Selector.DATA_DISMISS, function (event) {
             event.preventDefault();
-            pane.close(event);
+            pane.close();
           }) // Submit buttons
-          .off('click.pane', Selector.SUBMIT).on('click.pane', Selector.SUBMIT, function (event) {
+          .off(Event.CLICK_DATA_API, Selector.SUBMIT).on(Event.CLICK_DATA_API, Selector.SUBMIT, function (event) {
             event.preventDefault();
             $$$1(this).parents('form').trigger('submit', {
               'name': $$$1(this).attr('name'),
               'value': $$$1(this).val()
             });
           }) // Submit form
-          .off('submit.pane', Selector.FORM).on('submit.pane', Selector.FORM, function (event, button) {
+          .off(Event.SUBMIT_DATA_API, Selector.FORM).on(Event.SUBMIT_DATA_API, Selector.FORM, function (event, button) {
             event.preventDefault();
-            var $form = $$$1(this); // Event trigger
+            var $form = $$$1(this);
 
-            var eventSubmit = $$$1.Event(Event.SUBMIT);
-            $form.trigger(eventSubmit);
+            if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
+              // Get data of form
+              var formData = $form.serializeArray(); // Add button
 
-            if (!eventSubmit.isPropagationStopped()) {
-              if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
-                // Get data of form
-                var formData = $form.serializeArray(); // Add button
-
-                if ($$$1.isPlainObject(button)) {
-                  formData.push(button);
-                } // Form submission
+              if ($$$1.isPlainObject(button)) {
+                formData.push(button);
+              } // Form submission
 
 
-                pane._ajax({
-                  url: $$$1(this).attr('action') || pane._href,
-                  method: $$$1(this).attr('method') || 'get',
-                  data: formData,
-                  dataType: 'json'
-                }); // Event trigger
-
-
-                $form.trigger(Event.SUBMITTED);
-              }
+              pane._ajax({
+                url: $$$1(this).attr('action') || pane._href,
+                method: $$$1(this).attr('method') || 'get',
+                data: formData,
+                dataType: 'json'
+              });
             }
 
             return false;
@@ -416,7 +412,7 @@
             method: 'get'
           }, options, {
             success: function success(data, textStatus, jqXHR) {
-              var event = $$$1.Event(Event.LOADED, {
+              var eventLoaded = $$$1.Event(Event.LOADED, {
                 pane: pane._element,
                 paneAjax: {
                   data: data,
@@ -425,16 +421,16 @@
                 }
               }); // Event trigger
 
-              pane._element.trigger(event);
+              pane._element.trigger(eventLoaded);
 
-              if (!event.isPropagationStopped()) {
+              if (!eventLoaded.isPropagationStopped()) {
                 pane._element.html(jqXHR.responseText);
 
                 pane._element.trigger(Event.PRINTED, pane._element);
               }
             },
             error: function error(jqXHR, textStatus, errorThrown) {
-              var event = $$$1.Event(Event.LOADING_ERROR, {
+              var eventLoadingError = $$$1.Event(Event.LOADING_ERROR, {
                 pane: pane._element,
                 paneAjax: {
                   textStatus: textStatus,
@@ -443,9 +439,9 @@
                 }
               }); // Event trigger
 
-              pane._element.trigger(event);
+              pane._element.trigger(eventLoadingError);
 
-              if (!event.isPropagationStopped()) {
+              if (!eventLoadingError.isPropagationStopped()) {
                 pane.close();
               }
             },

@@ -34,16 +34,20 @@ const PaneManager = (($) => {
    */
 
   const Event = {
-    LOADING: 'loading.content.pane',
-    LOADED: 'loaded.content.pane',
-    LOADING_ERROR: 'error.content.pane',
-    PRINTED: 'printed.content.pane',
-    SUBMIT: 'submit.content.pane',
-    SUBMITTED: 'submitted.content.pane',
+    // Pane
     SHOW: 'show.pane',
     SHOWN: 'shown.pane',
     HIDE: 'hide.pane',
     HIDDEN: 'hidden.pane',
+    // Pane content
+    LOADING: 'loading.content.pane',
+    LOADED: 'loaded.content.pane',
+    LOADING_ERROR: 'error.content.pane',
+    PRINTED: 'printed.content.pane',
+    // Selectors
+    CLICK_DISMISS: 'click.dismiss.pane',
+    CLICK_DATA_API: 'click.pane',
+    SUBMIT_DATA_API: 'submit.pane',
   }
 
   /**
@@ -110,8 +114,8 @@ const PaneManager = (($) => {
       let manager = this
 
       $(document)
-        .off('click.pane', Selector.DATA_TOGGLE)
-        .on('click.pane',
+        .off(Event.CLICK_DATA_API, Selector.DATA_TOGGLE)
+        .on(Event.CLICK_DATA_API,
             Selector.DATA_TOGGLE,
             function (event) {
               event.preventDefault()
@@ -229,10 +233,10 @@ const PaneManager = (($) => {
         manager = this._manager
 
       // Event trigger
-      let event = $.Event(Event.HIDE, {pane: pane._element})
-      pane._element.trigger(event)
+      let eventClose = $.Event(Event.HIDE, {pane: pane._element})
+      pane._element.trigger(eventClose)
 
-      if (!event.isPropagationStopped()) {
+      if (!eventClose.isPropagationStopped()) {
         // Animation
         this._isTransitioning = true
         pane._element.removeClass('is-visible')
@@ -260,17 +264,17 @@ const PaneManager = (($) => {
 
       this._element
           // Dismiss
-          .off('click.pane', Selector.DATA_DISMISS)
-          .on('click.pane',
+          .off(Event.CLICK_DISMISS, Selector.DATA_DISMISS)
+          .on(Event.CLICK_DISMISS,
               Selector.DATA_DISMISS,
               function (event) {
                 event.preventDefault()
 
-                pane.close(event)
+                pane.close()
               })
           // Submit buttons
-          .off('click.pane', Selector.SUBMIT)
-          .on('click.pane',
+          .off(Event.CLICK_DATA_API, Selector.SUBMIT)
+          .on(Event.CLICK_DATA_API,
               Selector.SUBMIT,
               function (event) {
                 event.preventDefault()
@@ -278,39 +282,30 @@ const PaneManager = (($) => {
                 $(this).parents('form').trigger('submit', {'name': $(this).attr('name'), 'value': $(this).val()})
               })
           // Submit form
-          .off('submit.pane', Selector.FORM)
-          .on('submit.pane',
+          .off(Event.SUBMIT_DATA_API, Selector.FORM)
+          .on(Event.SUBMIT_DATA_API,
               Selector.FORM,
               function (event, button) {
                 event.preventDefault()
 
                 let $form = $(this)
 
-                // Event trigger
-                let eventSubmit = $.Event(Event.SUBMIT)
-                $form.trigger(eventSubmit)
+                if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
+                  // Get data of form
+                  let formData = $form.serializeArray()
 
-                if (!eventSubmit.isPropagationStopped()) {
-                  if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
-                    // Get data of form
-                    let formData = $form.serializeArray()
-
-                    // Add button
-                    if ($.isPlainObject(button)) {
-                      formData.push(button)
-                    }
-
-                    // Form submission
-                    pane._ajax({
-                                 url: $(this).attr('action') || pane._href,
-                                 method: $(this).attr('method') || 'get',
-                                 data: formData,
-                                 dataType: 'json'
-                               })
-
-                    // Event trigger
-                    $form.trigger(Event.SUBMITTED)
+                  // Add button
+                  if ($.isPlainObject(button)) {
+                    formData.push(button)
                   }
+
+                  // Form submission
+                  pane._ajax({
+                               url: $(this).attr('action') || pane._href,
+                               method: $(this).attr('method') || 'get',
+                               data: formData,
+                               dataType: 'json'
+                             })
                 }
 
                 return false
@@ -349,39 +344,38 @@ const PaneManager = (($) => {
         method: 'get',
         ...options,
         success: function (data, textStatus, jqXHR) {
-          let event = $.Event(Event.LOADED,
-                              {
-                                pane: pane._element,
-                                paneAjax: {
-                                  data: data,
-                                  textStatus: textStatus,
-                                  jqXHR: jqXHR,
-                                }
-                              })
+          let eventLoaded = $.Event(Event.LOADED,
+                                    {
+                                      pane: pane._element,
+                                      paneAjax: {
+                                        data: data,
+                                        textStatus: textStatus,
+                                        jqXHR: jqXHR,
+                                      }
+                                    })
 
           // Event trigger
-          pane._element.trigger(event)
+          pane._element.trigger(eventLoaded)
 
-          if (!event.isPropagationStopped()) {
+          if (!eventLoaded.isPropagationStopped()) {
             pane._element.html(jqXHR.responseText)
-
             pane._element.trigger(Event.PRINTED, pane._element)
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          let event = $.Event(Event.LOADING_ERROR,
-                              {
-                                pane: pane._element,
-                                paneAjax: {
-                                  textStatus: textStatus,
-                                  jqXHR: jqXHR,
-                                  errorThrown: errorThrown,
-                                }
-                              })
+          let eventLoadingError = $.Event(Event.LOADING_ERROR,
+                                          {
+                                            pane: pane._element,
+                                            paneAjax: {
+                                              textStatus: textStatus,
+                                              jqXHR: jqXHR,
+                                              errorThrown: errorThrown,
+                                            }
+                                          })
           // Event trigger
-          pane._element.trigger(event)
+          pane._element.trigger(eventLoadingError)
 
-          if (!event.isPropagationStopped()) {
+          if (!eventLoadingError.isPropagationStopped()) {
             pane.close()
           }
         },
