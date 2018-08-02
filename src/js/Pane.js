@@ -13,6 +13,7 @@
 import $ from 'jquery'
 
 const PaneManager = (($) => {
+  // Check jQuery requirements
   if (typeof $ === 'undefined') {
     throw new TypeError('jQuery Pane requires jQuery. jQuery must be included before.')
   }
@@ -107,7 +108,7 @@ const PaneManager = (($) => {
       let manager = this
 
       $(document)
-      //.off('click.pane', Selector.DATA_TOGGLE)
+        .off('click.pane', Selector.DATA_TOGGLE)
         .on('click.pane',
             Selector.DATA_TOGGLE,
             function (event) {
@@ -118,7 +119,7 @@ const PaneManager = (($) => {
                 console.debug('Selector', Selector.DATA_TOGGLE, 'has been clicked')
               }
 
-              let pane = manager._newPane(this)
+              manager._newPane(this)
             })
     }
 
@@ -244,7 +245,7 @@ const PaneManager = (($) => {
 
       this._element
           // Dismiss
-          //.off('click.pane', Selector.DATA_DISMISS)
+          .off('click.pane', Selector.DATA_DISMISS)
           .on('click.pane',
               Selector.DATA_DISMISS,
               function (event) {
@@ -253,7 +254,7 @@ const PaneManager = (($) => {
                 pane.close(event)
               })
           // Submit buttons
-          //.off('click.pane', Selector.SUBMIT)
+          .off('click.pane', Selector.SUBMIT)
           .on('click.pane',
               Selector.SUBMIT,
               function (event) {
@@ -262,7 +263,7 @@ const PaneManager = (($) => {
                 $(this).parents('form').trigger('submit', {'name': $(this).attr('name'), 'value': $(this).val()})
               })
           // Submit form
-          //.off('submit.pane', Selector.FORM)
+          .off('submit.pane', Selector.FORM)
           .on('submit.pane',
               Selector.FORM,
               function (event, button) {
@@ -271,7 +272,7 @@ const PaneManager = (($) => {
                 let $form = $(this)
                 let $pane = $form.parents('.pane')
 
-                if ((!$.isFunction($form.get(0).checkValidity) || $form.get(0).checkValidity())) {
+                if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
                   // Get data of form
                   let formData = $form.serializeArray()
 
@@ -347,7 +348,6 @@ const PaneManager = (($) => {
 
           // Event trigger
           pane._element.trigger(event)
-          console.log(pane._element)
 
           if (!event.isPropagationStopped()) {
             pane._element.html(jqXHR.responseText)
@@ -369,25 +369,6 @@ const PaneManager = (($) => {
       this._jqXHR = $.ajax(options)
     }
   }
-
-  ///**
-  // * jQuery
-  // */
-  //
-  //$(document)
-  //  .on(Event.)
-
-  $(document)
-    .on('click',
-        '.pane',
-        function (event) {
-          console.log('clickinternal')
-        })
-    .on('loaded.content.pane',
-        '.pane',
-        function (event) {
-          console.log('internal')
-        })
 
   return function (config) {
     return new PaneManager(config)
