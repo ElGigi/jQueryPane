@@ -32,7 +32,7 @@
     "build": "npm run build-css && npm run build-js",
     "build-css": "node-sass --output-style compressed --source-map dist/css --output dist/css src/scss/jquery-pane.scss",
     "build-js": "rollup -c && npm run build-js-min",
-    "build-js-min": "uglifyjs --source-map --compress --mangle --comments -o dist/js/jquery-pane.min.js -- dist/js/jquery-pane.js",
+    "build-js-min": "uglifyjs --source-map --compress --mangle -o dist/js/jquery-pane.min.js -- dist/js/jquery-pane.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "MIT",
