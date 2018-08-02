@@ -1,5 +1,21 @@
 # jQuery Pane
 
+## Usage
+
+Default usage:
+```javascript
+// Init without options
+PaneManager()
+
+// Init with options
+PaneManager({container: '#myContainer'})
+```
+
+## Options
+
+- `container`: container where .pane-wrapper will be create (default: body)
+- `loader`: loader content for `.pane-loader` element whose created during ajax loading
+
 ## Events
 
 - `show.pane`: This event fires immediately when the pane is create
