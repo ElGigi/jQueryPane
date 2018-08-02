@@ -176,11 +176,11 @@ const PaneManager = (($) => {
         console.debug('Pane opened')
       }
 
-      let $pane = this._element
+      let pane = this
 
       // Size?
       if (typeof className === 'string') {
-        $pane.addClass(className)
+        pane._element.addClass(className)
       }
 
       this._isTransitioning = true
@@ -188,17 +188,17 @@ const PaneManager = (($) => {
       this._manager.refresh()
 
       // Event trigger
-      $pane.trigger(Event.SHOW)
+      pane._element.trigger(Event.SHOW)
 
       // Animation
       setTimeout(
         function () {
-          $pane.addClass('is-visible')
+          pane._element.addClass('is-visible')
 
           // Event trigger
-          $pane.trigger(Event.SHOWN)
+          pane._element.trigger(Event.SHOWN)
 
-          this._isTransitioning = false
+          pane._isTransitioning = false
         },
         50
       )
@@ -223,28 +223,28 @@ const PaneManager = (($) => {
         return
       }
 
-      let $pane = this._element,
+      let pane = this,
         manager = this._manager
 
       // Event trigger
-      let event = $.Event(Event.HIDE, {pane: $pane})
-      $pane.trigger(event)
+      let event = $.Event(Event.HIDE, {pane: pane._element})
+      pane._element.trigger(event)
 
       if (!event.isPropagationStopped()) {
         // Animation
         this._isTransitioning = true
-        $pane.removeClass('is-visible')
+        pane._element.removeClass('is-visible')
 
         // After animation
         setTimeout(
           function () {
-            $pane.remove()
+            pane._element.remove()
             manager.refresh()
 
             // Event trigger
-            $pane.trigger(Event.HIDDEN)
+            pane._element.trigger(Event.HIDDEN)
 
-            this._isTransitioning = false
+            pane._isTransitioning = false
           },
           400
         )
