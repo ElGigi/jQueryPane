@@ -106,6 +106,8 @@
       LOADED: 'loaded.content.pane',
       LOADING_ERROR: 'error.content.pane',
       PRINTED: 'printed.content.pane',
+      SUBMIT: 'submit.content.pane',
+      SUBMITTED: 'submitted.content.pane',
       SHOW: 'show.pane',
       SHOWN: 'shown.pane',
       HIDE: 'hide.pane',
@@ -349,23 +351,31 @@
           }) // Submit form
           .off('submit.pane', Selector.FORM).on('submit.pane', Selector.FORM, function (event, button) {
             event.preventDefault();
-            var $form = $$$1(this);
+            var $form = $$$1(this); // Event trigger
 
-            if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
-              // Get data of form
-              var formData = $form.serializeArray(); // Add button
+            var eventSubmit = $$$1.Event(Event.SUBMIT);
+            $form.trigger(eventSubmit);
 
-              if ($$$1.isPlainObject(button)) {
-                formData.push(button);
-              } // Form submission
+            if (!eventSubmit.isPropagationStopped()) {
+              if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
+                // Get data of form
+                var formData = $form.serializeArray(); // Add button
+
+                if ($$$1.isPlainObject(button)) {
+                  formData.push(button);
+                } // Form submission
 
 
-              pane._ajax({
-                url: $$$1(this).attr('action') || pane._href,
-                method: $$$1(this).attr('method') || 'get',
-                data: formData,
-                dataType: 'json'
-              });
+                pane._ajax({
+                  url: $$$1(this).attr('action') || pane._href,
+                  method: $$$1(this).attr('method') || 'get',
+                  data: formData,
+                  dataType: 'json'
+                }); // Event trigger
+
+
+                $form.trigger(Event.SUBMITTED);
+              }
             }
 
             return false;

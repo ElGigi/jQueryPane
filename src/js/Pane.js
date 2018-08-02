@@ -38,6 +38,8 @@ const PaneManager = (($) => {
     LOADED: 'loaded.content.pane',
     LOADING_ERROR: 'error.content.pane',
     PRINTED: 'printed.content.pane',
+    SUBMIT: 'submit.content.pane',
+    SUBMITTED: 'submitted.content.pane',
     SHOW: 'show.pane',
     SHOWN: 'shown.pane',
     HIDE: 'hide.pane',
@@ -284,22 +286,31 @@ const PaneManager = (($) => {
 
                 let $form = $(this)
 
-                if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
-                  // Get data of form
-                  let formData = $form.serializeArray()
+                // Event trigger
+                let eventSubmit = $.Event(Event.SUBMIT)
+                $form.trigger(eventSubmit)
 
-                  // Add button
-                  if ($.isPlainObject(button)) {
-                    formData.push(button)
+                if (!eventSubmit.isPropagationStopped()) {
+                  if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
+                    // Get data of form
+                    let formData = $form.serializeArray()
+
+                    // Add button
+                    if ($.isPlainObject(button)) {
+                      formData.push(button)
+                    }
+
+                    // Form submission
+                    pane._ajax({
+                                 url: $(this).attr('action') || pane._href,
+                                 method: $(this).attr('method') || 'get',
+                                 data: formData,
+                                 dataType: 'json'
+                               })
+
+                    // Event trigger
+                    $form.trigger(Event.SUBMITTED)
                   }
-
-                  // Form submission
-                  pane._ajax({
-                               url: $(this).attr('action') || pane._href,
-                               method: $(this).attr('method') || 'get',
-                               data: formData,
-                               dataType: 'json'
-                             })
                 }
 
                 return false
