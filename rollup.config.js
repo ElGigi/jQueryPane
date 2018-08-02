@@ -5,14 +5,7 @@ module.exports = {
   external: ['jquery'],
   plugins: [
     babel({
-            exclude: 'node_modules/**',
-            //externalHelpersWhitelist: [
-            //  'defineProperties',
-            //  'createClass',
-            //  'inheritsLoose',
-            //  'defineProperty',
-            //  'objectSpread'
-            //]
+            exclude: 'node_modules/**'
           })
   ],
   output: {
