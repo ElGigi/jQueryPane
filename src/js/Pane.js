@@ -45,6 +45,7 @@ const PaneManager = (($) => {
     LOADED: 'loaded.content.pane',
     LOADING_ERROR: 'error.content.pane',
     PRINTED: 'printed.content.pane',
+    SUBMIT: 'submit.content.pane',
     // Selectors
     CLICK_DISMISS: 'click.dismiss.pane',
     CLICK_DATA_API: 'click.pane',
@@ -178,11 +179,6 @@ const PaneManager = (($) => {
         return
       }
 
-      // Debug
-      if (this._manager.config('debug')) {
-        console.debug('Pane opened')
-      }
-
       let pane = this
 
       // Size?
@@ -196,6 +192,9 @@ const PaneManager = (($) => {
 
       // Event trigger
       pane._element.trigger(Event.SHOW)
+      if (pane._manager.config('debug')) {
+        console.debug('Triggered event:', Event.SHOW)
+      }
 
       // Animation
       setTimeout(
@@ -204,6 +203,9 @@ const PaneManager = (($) => {
 
           // Event trigger
           pane._element.trigger(Event.SHOWN)
+          if (pane._manager.config('debug')) {
+            console.debug('Triggered event:', Event.SHOWN)
+          }
 
           pane._isTransitioning = false
         },
@@ -212,11 +214,6 @@ const PaneManager = (($) => {
     }
 
     load(href) {
-      // Debug
-      if (this._manager.config('debug')) {
-        console.debug('Pane loaded')
-      }
-
       if (typeof href !== 'string') {
         throw new TypeError('Pane::load() method need href in first argument')
       }
@@ -236,6 +233,9 @@ const PaneManager = (($) => {
       // Event trigger
       let eventClose = $.Event(Event.HIDE, {pane: pane._element})
       pane._element.trigger(eventClose)
+      if (pane._manager.config('debug')) {
+        console.debug('Triggered event:', Event.HIDE)
+      }
 
       if (!eventClose.isPropagationStopped()) {
         // Animation
@@ -250,6 +250,9 @@ const PaneManager = (($) => {
 
             // Event trigger
             pane._element.trigger(Event.HIDDEN)
+            if (pane._manager.config('debug')) {
+              console.debug('Triggered event:', Event.HIDDEN)
+            }
 
             pane._isTransitioning = false
           },
@@ -277,16 +280,16 @@ const PaneManager = (($) => {
           .off(Event.CLICK_DATA_API, Selector.SUBMIT)
           .on(Event.CLICK_DATA_API,
               Selector.SUBMIT,
-              function (event) {
-                event.preventDefault()
+              function () {
+                let $form = $(this).parents('form')
 
-                $(this).parents('form').trigger('submit', {'name': $(this).attr('name'), 'value': $(this).val()})
+                $form.data('submitButton', {'name': $(this).attr('name'), 'value': $(this).val()})
               })
           // Submit form
           .off(Event.SUBMIT_DATA_API, Selector.FORM)
           .on(Event.SUBMIT_DATA_API,
               Selector.FORM,
-              function (event, button) {
+              function (event) {
                 event.preventDefault()
 
                 let $form = $(this)
@@ -296,8 +299,8 @@ const PaneManager = (($) => {
                   let formData = $form.serializeArray()
 
                   // Add button
-                  if ($.isPlainObject(button)) {
-                    formData.push(button)
+                  if ($.isPlainObject($form.data('submitButton'))) {
+                    formData.push($form.data('submitButton'))
                   }
 
                   // Form submission
@@ -307,6 +310,9 @@ const PaneManager = (($) => {
                                data: formData,
                                dataType: 'json'
                              })
+
+                  // Remove submit button reference
+                  $form.removeData('submitButton')
                 }
               })
     }
@@ -336,6 +342,9 @@ const PaneManager = (($) => {
 
       // Event trigger
       pane._element.trigger(Event.LOADING)
+      if (pane._manager.config('debug')) {
+        console.debug('Triggered event:', Event.LOADING)
+      }
       pane._loader(true)
 
       // Ajax options
@@ -355,10 +364,16 @@ const PaneManager = (($) => {
 
           // Event trigger
           pane._element.trigger(eventLoaded)
+          if (pane._manager.config('debug')) {
+            console.debug('Triggered event:', Event.LOADED)
+          }
 
           if (!eventLoaded.isPropagationStopped()) {
             pane._element.html(jqXHR.responseText)
             pane._element.trigger(Event.PRINTED, pane._element)
+            if (pane._manager.config('debug')) {
+              console.debug('Triggered event:', Event.PRINTED)
+            }
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -373,6 +388,9 @@ const PaneManager = (($) => {
                                           })
           // Event trigger
           pane._element.trigger(eventLoadingError)
+          if (pane._manager.config('debug')) {
+            console.debug('Triggered event:', Event.LOADING_ERROR)
+          }
 
           if (!eventLoadingError.isPropagationStopped()) {
             pane.close()

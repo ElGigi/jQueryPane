@@ -113,6 +113,7 @@
       LOADED: 'loaded.content.pane',
       LOADING_ERROR: 'error.content.pane',
       PRINTED: 'printed.content.pane',
+      SUBMIT: 'submit.content.pane',
       // Selectors
       CLICK_DISMISS: 'click.dismiss.pane',
       CLICK_DATA_API: 'click.pane',
@@ -252,11 +253,6 @@
         value: function open(className) {
           if (this._isTransitioning) {
             return;
-          } // Debug
-
-
-          if (this._manager.config('debug')) {
-            console.debug('Pane opened');
           }
 
           var pane = this; // Size?
@@ -272,7 +268,11 @@
           this._manager.refresh(); // Event trigger
 
 
-          pane._element.trigger(Event.SHOW); // Animation
+          pane._element.trigger(Event.SHOW);
+
+          if (pane._manager.config('debug')) {
+            console.debug('Triggered event:', Event.SHOW);
+          } // Animation
 
 
           setTimeout(function () {
@@ -281,17 +281,16 @@
 
             pane._element.trigger(Event.SHOWN);
 
+            if (pane._manager.config('debug')) {
+              console.debug('Triggered event:', Event.SHOWN);
+            }
+
             pane._isTransitioning = false;
           }, 50);
         }
       }, {
         key: "load",
         value: function load(href) {
-          // Debug
-          if (this._manager.config('debug')) {
-            console.debug('Pane loaded');
-          }
-
           if (typeof href !== 'string') {
             throw new TypeError('Pane::load() method need href in first argument');
           }
@@ -318,6 +317,10 @@
 
           pane._element.trigger(eventClose);
 
+          if (pane._manager.config('debug')) {
+            console.debug('Triggered event:', Event.HIDE);
+          }
+
           if (!eventClose.isPropagationStopped()) {
             // Animation
             this._isTransitioning = true;
@@ -331,6 +334,10 @@
               manager.refresh(); // Event trigger
 
               pane._element.trigger(Event.HIDDEN);
+
+              if (pane._manager.config('debug')) {
+                console.debug('Triggered event:', Event.HIDDEN);
+              }
 
               pane._isTransitioning = false;
             }, 400);
@@ -347,14 +354,14 @@
             event.preventDefault();
             pane.close();
           }) // Submit buttons
-          .off(Event.CLICK_DATA_API, Selector.SUBMIT).on(Event.CLICK_DATA_API, Selector.SUBMIT, function (event) {
-            event.preventDefault();
-            $$$1(this).parents('form').trigger('submit', {
+          .off(Event.CLICK_DATA_API, Selector.SUBMIT).on(Event.CLICK_DATA_API, Selector.SUBMIT, function () {
+            var $form = $$$1(this).parents('form');
+            $form.data('submitButton', {
               'name': $$$1(this).attr('name'),
               'value': $$$1(this).val()
             });
           }) // Submit form
-          .off(Event.SUBMIT_DATA_API, Selector.FORM).on(Event.SUBMIT_DATA_API, Selector.FORM, function (event, button) {
+          .off(Event.SUBMIT_DATA_API, Selector.FORM).on(Event.SUBMIT_DATA_API, Selector.FORM, function (event) {
             event.preventDefault();
             var $form = $$$1(this);
 
@@ -362,8 +369,8 @@
               // Get data of form
               var formData = $form.serializeArray(); // Add button
 
-              if ($$$1.isPlainObject(button)) {
-                formData.push(button);
+              if ($$$1.isPlainObject($form.data('submitButton'))) {
+                formData.push($form.data('submitButton'));
               } // Form submission
 
 
@@ -372,7 +379,10 @@
                 method: $$$1(this).attr('method') || 'get',
                 data: formData,
                 dataType: 'json'
-              });
+              }); // Remove submit button reference
+
+
+              $form.removeData('submitButton');
             }
           });
         }
@@ -404,6 +414,10 @@
 
           pane._element.trigger(Event.LOADING);
 
+          if (pane._manager.config('debug')) {
+            console.debug('Triggered event:', Event.LOADING);
+          }
+
           pane._loader(true); // Ajax options
 
 
@@ -422,10 +436,18 @@
 
               pane._element.trigger(eventLoaded);
 
+              if (pane._manager.config('debug')) {
+                console.debug('Triggered event:', Event.LOADED);
+              }
+
               if (!eventLoaded.isPropagationStopped()) {
                 pane._element.html(jqXHR.responseText);
 
                 pane._element.trigger(Event.PRINTED, pane._element);
+
+                if (pane._manager.config('debug')) {
+                  console.debug('Triggered event:', Event.PRINTED);
+                }
               }
             },
             error: function error(jqXHR, textStatus, errorThrown) {
@@ -439,6 +461,10 @@
               }); // Event trigger
 
               pane._element.trigger(eventLoadingError);
+
+              if (pane._manager.config('debug')) {
+                console.debug('Triggered event:', Event.LOADING_ERROR);
+              }
 
               if (!eventLoadingError.isPropagationStopped()) {
                 pane.close();
