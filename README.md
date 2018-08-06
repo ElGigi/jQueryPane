@@ -2,6 +2,27 @@
 
 ## Usage
 
+### HTML
+
+Default HTML structure of pane: 
+```html
+<div class="pane">
+  <div class="pane-content">
+    <div class="pane-title">
+      <button type="button" data-dismiss="pane">X</button>
+      <h2 class="title">My pane title</h2>
+    </div>
+    <div class="pane-body">
+      ...
+    </div>
+  </div>
+</div>
+```
+
+**WARNING**: `div.pane` is automatically created by library.  
+
+### JavaScript
+
 Default usage:
 ```javascript
 // Init without options
@@ -9,6 +30,20 @@ PaneManager()
 
 // Init with options
 PaneManager({container: '#myContainer'})
+```
+
+### Triggers
+
+Links, buttons or others HTML elements can open panes, with `data-toggle="pane"`.
+
+Link example:
+```html
+<a href="/my-page.html" data-toggle="pane">My link</a>
+```
+
+Button example:
+```html
+<button type="button" data-toggle="pane" data-href="/my-page.html">My button</button>
 ```
 
 ## Options
