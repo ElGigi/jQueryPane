@@ -96,7 +96,8 @@
       container: 'body',
       loader: '',
       transitionInTime: 50,
-      transitionOutTime: 400
+      transitionOutTime: 400,
+      ajax: {}
       /**
        * Events
        */
@@ -423,7 +424,7 @@
 
           options = _objectSpread({
             method: 'get'
-          }, options, {
+          }, this._manager.config('ajax'), options, {
             success: function success(data, textStatus, jqXHR) {
               var eventLoaded = $$$1.Event(Event.LOADED, {
                 pane: pane._element,

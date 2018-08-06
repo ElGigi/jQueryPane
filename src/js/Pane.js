@@ -27,7 +27,8 @@ const PaneManager = (($) => {
     container: 'body',
     loader: '',
     transitionInTime: 50,
-    transitionOutTime: 400
+    transitionOutTime: 400,
+    ajax: {},
   }
 
   /**
@@ -350,6 +351,7 @@ const PaneManager = (($) => {
       // Ajax options
       options = {
         method: 'get',
+        ...this._manager.config('ajax'),
         ...options,
         success: function (data, textStatus, jqXHR) {
           let eventLoaded = $.Event(Event.LOADED,
