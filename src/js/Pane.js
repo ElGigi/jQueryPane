@@ -141,7 +141,7 @@ const PaneManager = (($) => {
       }
 
       let pane = new Pane(this)
-      pane.open($(relatedTarget).attr('paneClass') || '')
+      pane.open($(relatedTarget).data('paneClass') || '')
       pane.load(href)
 
       return pane

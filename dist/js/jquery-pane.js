@@ -197,7 +197,7 @@
           }
 
           var pane = new Pane(this);
-          pane.open($$$1(relatedTarget).attr('paneClass') || '');
+          pane.open($$$1(relatedTarget).data('paneClass') || '');
           pane.load(href);
           return pane;
         }
