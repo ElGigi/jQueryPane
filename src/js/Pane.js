@@ -128,20 +128,30 @@ const PaneManager = (($) => {
                 console.debug('Selector', Selector.DATA_TOGGLE, 'has been clicked')
               }
 
-              manager._newPane(this)
+              manager._pane(this)
             })
     }
 
-    _newPane(relatedTarget) {
-      let href = $(relatedTarget).data('href') || $(relatedTarget).attr('href')
+    _pane(relatedTarget) {
+      let pane = null,
+        href = $(relatedTarget).data('href') || $(relatedTarget).attr('href'),
+        target = $(relatedTarget).data('paneTarget') || ''
 
       if (!href) {
         console.error('Pane has no href to load content')
         return
       }
 
-      let pane = new Pane(this)
-      pane.open($(relatedTarget).data('paneClass') || '')
+      // Target self?
+      if (target === 'self') {
+        pane = $(this).parents(Selector.PANE).data('pane')
+      }
+
+      // Need to create pane?
+      if (!pane) {
+        pane = new Pane(this)
+        pane.open($(relatedTarget).data('paneClass') || '')
+      }
       pane.load(href)
 
       return pane

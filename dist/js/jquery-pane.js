@@ -183,21 +183,32 @@
               console.debug('Selector', Selector.DATA_TOGGLE, 'has been clicked');
             }
 
-            manager._newPane(this);
+            manager._pane(this);
           });
         }
       }, {
-        key: "_newPane",
-        value: function _newPane(relatedTarget) {
-          var href = $$$1(relatedTarget).data('href') || $$$1(relatedTarget).attr('href');
+        key: "_pane",
+        value: function _pane(relatedTarget) {
+          var pane = null,
+              href = $$$1(relatedTarget).data('href') || $$$1(relatedTarget).attr('href'),
+              target = $$$1(relatedTarget).data('paneTarget') || '';
 
           if (!href) {
             console.error('Pane has no href to load content');
             return;
+          } // Target self?
+
+
+          if (target === 'self') {
+            pane = $$$1(this).parents(Selector.PANE).data('pane');
+          } // Need to create pane?
+
+
+          if (!pane) {
+            pane = new Pane(this);
+            pane.open($$$1(relatedTarget).data('paneClass') || '');
           }
 
-          var pane = new Pane(this);
-          pane.open($$$1(relatedTarget).data('paneClass') || '');
           pane.load(href);
           return pane;
         }
