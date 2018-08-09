@@ -499,7 +499,7 @@
       }], [{
         key: "_jQueryInterface",
         value: function _jQueryInterface(action, arg1) {
-          return $$$1.each(function () {
+          return this.each(function () {
             if (!(_typeof($$$1(this).data('pane')) === 'object' && $$$1(this).data('pane') instanceof Pane)) {
               throw new Error('Not a pane');
             }

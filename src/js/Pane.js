@@ -423,7 +423,7 @@ const PaneManager = (($) => {
     }
 
     static _jQueryInterface(action, arg1) {
-      return $.each(function () {
+      return this.each(function () {
         if (!(typeof $(this).data('pane') === 'object' && $(this).data('pane') instanceof Pane)) {
           throw new Error('Not a pane')
         }
