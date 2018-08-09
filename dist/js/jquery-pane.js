@@ -301,6 +301,11 @@
           }, 50);
         }
       }, {
+        key: "reload",
+        value: function reload() {
+          this.load(this._href);
+        }
+      }, {
         key: "load",
         value: function load(href) {
           if (typeof href !== 'string') {
@@ -491,10 +496,41 @@
           });
           this._jqXHR = $$$1.ajax(options);
         }
+      }], [{
+        key: "_jQueryInterface",
+        value: function _jQueryInterface(action, arg1) {
+          return $$$1.each(function () {
+            if (!(_typeof($$$1(this).data('pane')) === 'object' && $$$1(this).data('pane') instanceof Pane)) {
+              throw new Error('Not a pane');
+            }
+
+            if (typeof action === 'string') {
+              var pane = $$$1(this).data('pane');
+
+              switch (action) {
+                case 'close':
+                case 'load':
+                case 'reload':
+                  pane[action](arg1);
+                  break;
+
+                default:
+                  throw new TypeError("No method named \"".concat(action, "\""));
+              }
+            }
+          });
+        }
       }]);
 
       return Pane;
-    }();
+    }(); // jQuery
+
+
+    $$$1.fn['pane'] = Pane._jQueryInterface;
+
+    $$$1.fn['pane'].noConflict = function () {
+      return Pane._jQueryInterface;
+    };
 
     return function (config) {
       return new PaneManager(config);

@@ -224,6 +224,10 @@ const PaneManager = (($) => {
       )
     }
 
+    reload() {
+      this.load(this._href)
+    }
+
     load(href) {
       if (typeof href !== 'string') {
         throw new TypeError('Pane::load() method need href in first argument')
@@ -417,6 +421,34 @@ const PaneManager = (($) => {
       // Ajax
       this._jqXHR = $.ajax(options)
     }
+
+    static _jQueryInterface(action, arg1) {
+      return $.each(function () {
+        if (!(typeof $(this).data('pane') === 'object' && $(this).data('pane') instanceof Pane)) {
+          throw new Error('Not a pane')
+        }
+
+        if (typeof action === 'string') {
+          let pane = $(this).data('pane')
+
+          switch (action) {
+            case 'close':
+            case 'load':
+            case 'reload':
+              pane[action](arg1)
+              break
+            default:
+              throw new TypeError(`No method named "${action}"`)
+          }
+        }
+      })
+    }
+  }
+
+  // jQuery
+  $.fn['pane'] = Pane._jQueryInterface
+  $.fn['pane'].noConflict = function () {
+    return Pane._jQueryInterface
   }
 
   return function (config) {
