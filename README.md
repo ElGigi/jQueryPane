@@ -19,7 +19,9 @@ Default HTML structure of pane:
 </div>
 ```
 
-**WARNING**: `div.pane` is automatically created by library.  
+> **Warning**:
+>
+> `div.pane` is automatically created by library.  
 
 ### JavaScript
 
@@ -61,3 +63,18 @@ Button example:
 - `loaded.content.pane`: This event fires is fired when AJAX content is loaded
 - `printed.content.pane`: This event fires is fired when text content of AJAX result is printed
 - `error.content.pane`: This event fires immediately when AJAX error occurred
+
+## Methods
+
+A jQuery method is available to interact with pane, and only panes.
+
+```javascript
+// Reload pane content
+$('.pane').pane('reload');
+
+// Load content
+$('.pane').pane('load', '/path/page.html');
+
+// Close pane
+$('.pane').pane('reload');
+```
