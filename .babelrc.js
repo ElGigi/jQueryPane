@@ -8,7 +8,6 @@ module.exports = {
     ]
   ],
   plugins: [
-    "external-helpers",
     "@babel/proposal-object-rest-spread"
   ]
 }
