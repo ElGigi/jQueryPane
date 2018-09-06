@@ -144,7 +144,7 @@ const PaneManager = (($) => {
 
       // Target self?
       if (target === 'self') {
-        pane = $(this).parents(Selector.PANE).data('pane')
+        pane = $(relatedTarget).parents(Selector.PANE).data('pane')
       }
 
       // Need to create pane?

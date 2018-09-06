@@ -200,7 +200,7 @@
 
 
           if (target === 'self') {
-            pane = $$$1(this).parents(Selector.PANE).data('pane');
+            pane = $$$1(relatedTarget).parents(Selector.PANE).data('pane');
           } // Need to create pane?
 
 
