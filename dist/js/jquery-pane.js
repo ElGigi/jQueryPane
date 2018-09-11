@@ -442,6 +442,10 @@
             method: 'get'
           }, this._manager.config('ajax'), options, {
             success: function success(data, textStatus, jqXHR) {
+              pane._jqXHR = null;
+
+              pane._loader(false);
+
               var eventLoaded = $$$1.Event(Event.LOADED, {
                 pane: pane._element,
                 paneAjax: {
@@ -468,6 +472,10 @@
               }
             },
             error: function error(jqXHR, textStatus, errorThrown) {
+              pane._jqXHR = null;
+
+              pane._loader(false);
+
               var eventLoadingError = $$$1.Event(Event.LOADING_ERROR, {
                 pane: pane._element,
                 paneAjax: {
@@ -486,11 +494,6 @@
               if (!eventLoadingError.isPropagationStopped()) {
                 pane.close();
               }
-            },
-            complete: function complete() {
-              pane._jqXHR = null;
-
-              pane._loader(false);
             } // Ajax
 
           });
