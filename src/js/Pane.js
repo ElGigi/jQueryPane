@@ -387,6 +387,9 @@ const PaneManager = (($) => {
         ...this._manager.config('ajax'),
         ...options,
         success: function (data, textStatus, jqXHR) {
+          pane._jqXHR = null
+          pane._loader(false)
+
           let eventLoaded = $.Event(Event.LOADED,
                                     {
                                       pane: pane._element,
@@ -412,6 +415,9 @@ const PaneManager = (($) => {
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
+          pane._jqXHR = null
+          pane._loader(false)
+
           let eventLoadingError = $.Event(Event.LOADING_ERROR,
                                           {
                                             pane: pane._element,
@@ -430,10 +436,6 @@ const PaneManager = (($) => {
           if (!eventLoadingError.isPropagationStopped()) {
             pane.close()
           }
-        },
-        complete: function () {
-          pane._jqXHR = null
-          pane._loader(false)
         }
       }
 
