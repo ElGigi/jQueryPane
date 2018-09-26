@@ -311,7 +311,7 @@ const PaneManager = (($) => {
 
                 if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
                   // Get data of form
-                  let formData = $form.serializeArray()
+                  let formData = pane._serializeForm($form)
 
                   // Add button
                   if ($.isPlainObject($form.data('submitButton'))) {
@@ -322,6 +322,8 @@ const PaneManager = (($) => {
                   pane._ajax({
                                url: $(this).attr('action') || pane._href,
                                method: $(this).attr('method') || 'get',
+                               processData: false,
+                               contentType: false,
                                data: formData,
                                dataType: 'json'
                              })
@@ -330,6 +332,23 @@ const PaneManager = (($) => {
                   $form.removeData('submitButton')
                 }
               })
+    }
+
+    _serializeForm(form) {
+      var formData = new FormData(),
+          formParams = form.serializeArray()
+
+      $.each(form.find('input[type="file"]'), function(i, tag) {
+        $.each($(tag)[0].files, function(i, file) {
+          formData.append(tag.name, file);
+        });
+      });
+
+      $.each(formParams, function(i, val) {
+        formData.append(val.name, val.value);
+      });
+
+      return formData;
     }
 
     _loader(toggle) {

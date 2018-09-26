@@ -384,7 +384,8 @@
 
             if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
               // Get data of form
-              var formData = $form.serializeArray(); // Add button
+              var formData = pane._serializeForm($form); // Add button
+
 
               if ($$$1.isPlainObject($form.data('submitButton'))) {
                 formData.push($form.data('submitButton'));
@@ -394,6 +395,8 @@
               pane._ajax({
                 url: $$$1(this).attr('action') || pane._href,
                 method: $$$1(this).attr('method') || 'get',
+                processData: false,
+                contentType: false,
                 data: formData,
                 dataType: 'json'
               }); // Remove submit button reference
@@ -402,6 +405,21 @@
               $form.removeData('submitButton');
             }
           });
+        }
+      }, {
+        key: "_serializeForm",
+        value: function _serializeForm(form) {
+          var formData = new FormData(),
+              formParams = form.serializeArray();
+          $$$1.each(form.find('input[type="file"]'), function (i, tag) {
+            $$$1.each($$$1(tag)[0].files, function (i, file) {
+              formData.append(tag.name, file);
+            });
+          });
+          $$$1.each(formParams, function (i, val) {
+            formData.append(val.name, val.value);
+          });
+          return formData;
         }
       }, {
         key: "_loader",
