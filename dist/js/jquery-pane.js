@@ -388,7 +388,8 @@
 
 
               if ($$$1.isPlainObject($form.data('submitButton'))) {
-                formData.push($form.data('submitButton'));
+                var submitButtonData = $form.data('submitButton');
+                formData.append(submitButtonData.name, submitButtonData.value);
               } // Form submission
 
 

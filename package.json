@@ -40,7 +40,9 @@
     "url": "https://github.com/ElGigi/jQueryPane/issues"
   },
   "homepage": "https://github.com/ElGigi/jQueryPane#readme",
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^1.9.1"
+  },
   "peerDependencies": {
     "jquery": "1.9.1 - 3"
   },

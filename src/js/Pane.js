@@ -5,6 +5,7 @@
  * @copyright 2018
  * @author Cassie ROUSSEAU <https://github.com/K6-front>
  * @author Ronan GIRON <https://github.com/ElGigi>
+ * @author Yohann LORANT <https://github.com/ylorant>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code, to the root.
@@ -315,7 +316,8 @@ const PaneManager = (($) => {
 
                   // Add button
                   if ($.isPlainObject($form.data('submitButton'))) {
-                    formData.push($form.data('submitButton'))
+                    let submitButtonData = $form.data('submitButton');
+                    formData.append(submitButtonData.name, submitButtonData.value);
                   }
 
                   // Form submission
