@@ -556,7 +556,7 @@
       else if (!!navigator.userAgent.match(/Trident\/7\./)) return 11;else return 0; //It is not IE
     }
 
-    if (GetIEVersion() > 0) $$$1('body').addClass('.ie11');else //  alert("This is not IE.");
+    if (GetIEVersion() > 0) $$$1('body').addClass('ie11');else //  alert("This is not IE.");
       // jQuery
       $$$1.fn['pane'] = Pane._jQueryInterface;
 

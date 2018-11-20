@@ -486,7 +486,7 @@ const PaneManager = (($) => {
   }
   
   if (GetIEVersion() > 0) 
-     $('body').addClass('.ie11');
+     $('body').addClass('ie11');
   else 
     //  alert("This is not IE.");
 
