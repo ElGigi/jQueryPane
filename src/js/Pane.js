@@ -20,6 +20,27 @@ const PaneManager = (($) => {
   }
 
   /**
+   * Get Internet Explorer version.
+   *
+   * @return {number}
+   */
+  function GetIEVersion() {
+    let sAgent = window.navigator.userAgent
+    let Idx = sAgent.indexOf("MSIE")
+
+    // If IE, return version number.
+    if (Idx > 0) {
+      return parseInt(sAgent.substring(Idx + 5, sAgent.indexOf(".", Idx)))
+    }
+    // If IE 11 then look for Updated user agent string.
+    else if (!!navigator.userAgent.match(/Trident\/7\./)) {
+      return 11
+    } else {
+      return 0 //It is not IE
+    }
+  }
+
+  /**
    * Defaults
    */
 
@@ -92,6 +113,11 @@ const PaneManager = (($) => {
         if (this._wrapper.length === 0) {
           this._wrapper = $('<div class="pane-wrapper"></div>')
           $(this._config.container).append(this._wrapper)
+
+          // Internet explorer
+          if (GetIEVersion() > 0) {
+            $(this._wrapper).addClass('.pane-ie')
+          }
         }
       }
 
@@ -316,8 +342,8 @@ const PaneManager = (($) => {
 
                   // Add button
                   if ($.isPlainObject($form.data('submitButton'))) {
-                    let submitButtonData = $form.data('submitButton');
-                    formData.append(submitButtonData.name, submitButtonData.value);
+                    let submitButtonData = $form.data('submitButton')
+                    formData.append(submitButtonData.name, submitButtonData.value)
                   }
 
                   // Form submission
@@ -338,19 +364,19 @@ const PaneManager = (($) => {
 
     _serializeForm(form) {
       var formData = new FormData(),
-          formParams = form.serializeArray()
+        formParams = form.serializeArray()
 
-      $.each(form.find('input[type="file"]'), function(i, tag) {
-        $.each($(tag)[0].files, function(i, file) {
-          formData.append(tag.name, file);
-        });
-      });
+      $.each(form.find('input[type="file"]'), function (i, tag) {
+        $.each($(tag)[0].files, function (i, file) {
+          formData.append(tag.name, file)
+        })
+      })
 
-      $.each(formParams, function(i, val) {
-        formData.append(val.name, val.value);
-      });
+      $.each(formParams, function (i, val) {
+        formData.append(val.name, val.value)
+      })
 
-      return formData;
+      return formData
     }
 
     _loader(toggle) {
@@ -467,28 +493,6 @@ const PaneManager = (($) => {
       })
     }
   }
-
-  // pane ie11
-  function GetIEVersion() {
-    var sAgent = window.navigator.userAgent;
-    var Idx = sAgent.indexOf("MSIE");
-  
-    // If IE, return version number.
-    if (Idx > 0) 
-      return parseInt(sAgent.substring(Idx+ 5, sAgent.indexOf(".", Idx)));
-  
-    // If IE 11 then look for Updated user agent string.
-    else if (!!navigator.userAgent.match(/Trident\/7\./)) 
-      return 11;
-  
-    else
-      return 0; //It is not IE
-  }
-  
-  if (GetIEVersion() > 0) 
-     $('body').addClass('ie11');
-  else 
-    //  alert("This is not IE.");
 
   // jQuery
   $.fn['pane'] = Pane._jQueryInterface

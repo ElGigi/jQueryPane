@@ -87,6 +87,26 @@
       throw new TypeError('jQuery Pane requires jQuery. jQuery must be included before.');
     }
     /**
+     * Get Internet Explorer version.
+     *
+     * @return {number}
+     */
+
+
+    function GetIEVersion() {
+      var sAgent = window.navigator.userAgent;
+      var Idx = sAgent.indexOf("MSIE"); // If IE, return version number.
+
+      if (Idx > 0) {
+        return parseInt(sAgent.substring(Idx + 5, sAgent.indexOf(".", Idx)));
+      } // If IE 11 then look for Updated user agent string.
+      else if (!!navigator.userAgent.match(/Trident\/7\./)) {
+          return 11;
+        } else {
+          return 0; //It is not IE
+        }
+    }
+    /**
      * Defaults
      */
 
@@ -226,7 +246,11 @@
 
             if (this._wrapper.length === 0) {
               this._wrapper = $$$1('<div class="pane-wrapper"></div>');
-              $$$1(this._config.container).append(this._wrapper);
+              $$$1(this._config.container).append(this._wrapper); // Internet explorer
+
+              if (GetIEVersion() > 0) {
+                $$$1(this._wrapper).addClass('.pane-ie');
+              }
             }
           }
 
@@ -545,20 +569,10 @@
       }]);
 
       return Pane;
-    }(); // pane ie11
+    }(); // jQuery
 
 
-    function GetIEVersion() {
-      var sAgent = window.navigator.userAgent;
-      var Idx = sAgent.indexOf("MSIE"); // If IE, return version number.
-
-      if (Idx > 0) return parseInt(sAgent.substring(Idx + 5, sAgent.indexOf(".", Idx))); // If IE 11 then look for Updated user agent string.
-      else if (!!navigator.userAgent.match(/Trident\/7\./)) return 11;else return 0; //It is not IE
-    }
-
-    if (GetIEVersion() > 0) $$$1('body').addClass('ie11');else //  alert("This is not IE.");
-      // jQuery
-      $$$1.fn['pane'] = Pane._jQueryInterface;
+    $$$1.fn['pane'] = Pane._jQueryInterface;
 
     $$$1.fn['pane'].noConflict = function () {
       return Pane._jQueryInterface;
