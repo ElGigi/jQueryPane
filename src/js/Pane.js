@@ -116,7 +116,7 @@ const PaneManager = (($) => {
 
           // Internet explorer
           if (GetIEVersion() > 0) {
-            $(this._wrapper).addClass('.pane-ie')
+            $(this._wrapper).addClass('pane-ie')
           }
         }
       }

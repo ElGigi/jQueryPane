@@ -249,7 +249,7 @@
               $$$1(this._config.container).append(this._wrapper); // Internet explorer
 
               if (GetIEVersion() > 0) {
-                $$$1(this._wrapper).addClass('.pane-ie');
+                $$$1(this._wrapper).addClass('pane-ie');
               }
             }
           }
