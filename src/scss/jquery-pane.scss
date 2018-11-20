@@ -256,3 +256,14 @@ $pane-header-height: 72px;
     -webkit-transform: scale(1.0);
   }
 }
+
+.ie11 {
+  .pane-wrapper {
+    .pane {
+      &.is-visible {
+        transform: none;
+        top: 0; right: 0; bottom: 0; left: inherit; 
+      }
+    }
+  }
+} 
