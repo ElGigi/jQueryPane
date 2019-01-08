@@ -399,7 +399,8 @@
             var $form = $$$1(this).parents('form');
             $form.data('submitButton', {
               'name': $$$1(this).attr('name'),
-              'value': $$$1(this).val()
+              'value': $$$1(this).val(),
+              'novalidate': $$$1(this).attr('formnovalidate') !== undefined
             });
           }) // Submit form
           .off(Event.SUBMIT_DATA_API, Selector.FORM).on(Event.SUBMIT_DATA_API, Selector.FORM, function (event) {
@@ -412,7 +413,7 @@
               submitButton = $form.data('submitButton');
             }
 
-            if (submitButton && submitButton.prop('formnovalidate') || typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
+            if (submitButton && submitButton.formnovalidate || typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
               // Get data of form
               var formData = pane._serializeForm($form); // Add button to form data
 

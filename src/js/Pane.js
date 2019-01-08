@@ -325,7 +325,12 @@ const PaneManager = (($) => {
               function () {
                 let $form = $(this).parents('form')
 
-                $form.data('submitButton', {'name': $(this).attr('name'), 'value': $(this).val()})
+                $form.data('submitButton',
+                           {
+                             'name': $(this).attr('name'),
+                             'value': $(this).val(),
+                             'novalidate': ($(this).attr('formnovalidate') !== undefined)
+                           })
               })
           // Submit form
           .off(Event.SUBMIT_DATA_API, Selector.FORM)
@@ -342,7 +347,7 @@ const PaneManager = (($) => {
                   submitButton = $form.data('submitButton')
                 }
 
-                if ((submitButton && submitButton.prop('formnovalidate')) ||
+                if ((submitButton && submitButton.formnovalidate) ||
                   typeof $form.get(0).checkValidity !== 'function' ||
                   $form.get(0).checkValidity()) {
                   // Get data of form
