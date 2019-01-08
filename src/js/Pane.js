@@ -347,7 +347,7 @@ const PaneManager = (($) => {
                   submitButton = $form.data('submitButton')
                 }
 
-                if ((submitButton && submitButton.formnovalidate) ||
+                if ((submitButton && submitButton.novalidate) ||
                   typeof $form.get(0).checkValidity !== 'function' ||
                   $form.get(0).checkValidity()) {
                   // Get data of form

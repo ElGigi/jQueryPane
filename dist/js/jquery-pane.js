@@ -413,7 +413,7 @@
               submitButton = $form.data('submitButton');
             }
 
-            if (submitButton && submitButton.formnovalidate || typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
+            if (submitButton && submitButton.novalidate || typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
               // Get data of form
               var formData = pane._serializeForm($form); // Add button to form data
 
