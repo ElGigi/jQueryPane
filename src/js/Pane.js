@@ -336,14 +336,21 @@ const PaneManager = (($) => {
 
                 let $form = $(this)
 
-                if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
+                // Submit button
+                let submitButton = null
+                if ($.isPlainObject($form.data('submitButton'))) {
+                  submitButton = $form.data('submitButton')
+                }
+
+                if ((submitButton && submitButton.prop('formnovalidate')) ||
+                  typeof $form.get(0).checkValidity !== 'function' ||
+                  $form.get(0).checkValidity()) {
                   // Get data of form
                   let formData = pane._serializeForm($form)
 
-                  // Add button
-                  if ($.isPlainObject($form.data('submitButton'))) {
-                    let submitButtonData = $form.data('submitButton')
-                    formData.append(submitButtonData.name, submitButtonData.value)
+                  // Add button to form data
+                  if (submitButton) {
+                    formData.append(submitButton.name, submitButton.value)
                   }
 
                   // Form submission

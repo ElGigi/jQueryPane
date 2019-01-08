@@ -404,16 +404,21 @@
           }) // Submit form
           .off(Event.SUBMIT_DATA_API, Selector.FORM).on(Event.SUBMIT_DATA_API, Selector.FORM, function (event) {
             event.preventDefault();
-            var $form = $$$1(this);
+            var $form = $$$1(this); // Submit button
 
-            if (typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
+            var submitButton = null;
+
+            if ($$$1.isPlainObject($form.data('submitButton'))) {
+              submitButton = $form.data('submitButton');
+            }
+
+            if (submitButton && submitButton.prop('formnovalidate') || typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
               // Get data of form
-              var formData = pane._serializeForm($form); // Add button
+              var formData = pane._serializeForm($form); // Add button to form data
 
 
-              if ($$$1.isPlainObject($form.data('submitButton'))) {
-                var submitButtonData = $form.data('submitButton');
-                formData.append(submitButtonData.name, submitButtonData.value);
+              if (submitButton) {
+                formData.append(submitButton.name, submitButton.value);
               } // Form submission
 
 
