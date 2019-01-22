@@ -113,11 +113,11 @@ const PaneManager = (($) => {
         if (this._wrapper.length === 0) {
           this._wrapper = $('<div class="pane-wrapper"></div>')
           $(this._config.container).append(this._wrapper)
+        }
 
-          // Internet explorer
-          if (GetIEVersion() > 0) {
-            $(this._wrapper).addClass('pane-ie')
-          }
+        // Internet explorer
+        if (!this._wrapper.hasClass('pane-ie') && GetIEVersion() > 0) {
+          this._wrapper.addClass('pane-ie')
         }
       }
 

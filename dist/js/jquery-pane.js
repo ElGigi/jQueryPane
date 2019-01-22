@@ -246,11 +246,12 @@
 
             if (this._wrapper.length === 0) {
               this._wrapper = $$$1('<div class="pane-wrapper"></div>');
-              $$$1(this._config.container).append(this._wrapper); // Internet explorer
+              $$$1(this._config.container).append(this._wrapper);
+            } // Internet explorer
 
-              if (GetIEVersion() > 0) {
-                $$$1(this._wrapper).addClass('pane-ie');
-              }
+
+            if (!this._wrapper.hasClass('pane-ie') && GetIEVersion() > 0) {
+              this._wrapper.addClass('pane-ie');
             }
           }
 
