@@ -190,6 +190,13 @@
           }
 
           return this._config[key];
+        }
+      }, {
+        key: "new",
+        value: function _new(paneClass) {
+          var pane = new Pane(this);
+          pane.open(paneClass || '');
+          return pane;
         } // Private
 
       }, {
@@ -225,8 +232,7 @@
 
 
           if (!pane) {
-            pane = new Pane(this);
-            pane.open($$$1(relatedTarget).data('paneClass') || '');
+            pane = this.new($$$1(relatedTarget).data('paneClass') || '');
           }
 
           pane.load(href);

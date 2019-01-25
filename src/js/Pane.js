@@ -138,6 +138,13 @@ const PaneManager = (($) => {
       return this._config[key]
     }
 
+    new(paneClass) {
+      let pane = new Pane(this)
+      pane.open(paneClass || '')
+
+      return pane
+    }
+
     // Private
 
     _events() {
@@ -176,8 +183,7 @@ const PaneManager = (($) => {
 
       // Need to create pane?
       if (!pane) {
-        pane = new Pane(this)
-        pane.open($(relatedTarget).data('paneClass') || '')
+        pane = this.new($(relatedTarget).data('paneClass') || '')
       }
       pane.load(href)
 

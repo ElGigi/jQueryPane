@@ -64,7 +64,9 @@ Button example:
 - `printed.content.pane`: This event fires is fired when text content of AJAX result is printed
 - `error.content.pane`: This event fires immediately when AJAX error occurred
 
-## Methods
+## API
+
+### jQuery
 
 A jQuery method is available to interact with pane, and only panes.
 
@@ -76,5 +78,40 @@ $('.pane').pane('reload');
 $('.pane').pane('load', '/path/page.html');
 
 // Close pane
-$('.pane').pane('reload');
+$('.pane').pane('close');
+```
+
+### PaneManager object
+
+Methods are available from the PaneManager object.
+
+```javascript
+let paneManager = PaneManager()
+
+// Refresh (show wrapper if at least one pane exists)
+paneManager.refresh()
+
+// Get a config value
+paneManager.config(key)
+
+// Create a new empty pane with given CSS class
+paneManager.new(paneClass)
+```
+
+### Pane object
+
+When you create or get a pane, you can access to some methods. 
+
+```javascript
+let paneManager = PaneManager()
+let pane = paneManager.new()
+
+// Reload pane content
+pane.reload()
+
+// Load content
+pane.load('/path/page.html')
+
+// Close pane
+pane.close()
 ```
