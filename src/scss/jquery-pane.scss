@@ -11,30 +11,91 @@
  */
 
 // Variables
-$pane-header-height: 72px;
+$pane-header-height:                63px;
+// $height--pane-header__line-top:     64px;
+// $height--pane-header__line-top-sm:  48px;
+$height--widget-dashboard__list:    144px !default;
+$height--filters__list:             48px;
+$height--filters__container:        48px;
+$height--filters__container-sm:     90px;
+
+// Z-index 
+$zindex-beforepane:                 1040 !default;
+$zindex-pane:                       1060 !default;
+$zindex-panevisible:                1070 !default;
+$zindex-panefirst:                  1080 !default;
+$zindex-paneloader:                 2070 !default;
+
+.pane {
+  overflow-y: auto;
+  // Header
+  .pane-header {
+    z-index: 60;
+    height: $pane-header-height;
+    background-color: white;
+    margin: 0 -1rem 0;
+    padding: 0 1rem;
+    @include media-breakpoint-up(md) {
+      margin: 0 -2rem 0;
+      padding: 0 2rem;
+    }
+    &__title {
+      font-size: 1.75rem;
+      margin-bottom: 0;
+    }
+    &__line-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  
+      // height: $height--pane-header__line-top-sm;
+      padding: 15px 0;
+  
+      .btn-close {
+        background-color: transparent;
+      }
+    }
+    &__list {
+      display: flex;
+      align-items: center;
+  
+      margin-bottom: 0;
+      &-item {
+      margin: 0 .25rem;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+    .btn-close {
+      background-color: transparent;
+      font-size: 2rem;
+      padding-left: 0;
+    }
+
+    + * {
+      flex-grow: 2;
+    }
+  }
+}
 
 .pane-wrapper {
   .pane {
-    min-height: 1px;
-    transition: transform .4s;
-    background: #eee;
-    bottom: 0;
-    left: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
     position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1061;
+    top: 0; bottom: 0; left: 0;
+    min-height: 1px; width: 100%;
+    transition: transform .4s;
 
+    background: #eee;
+    overflow-x: hidden;
+    z-index: $zindex-pane;
     box-shadow: 0 0 10px -5px rgba(0, 0, 0, 0.2), 0 0 24px 2px rgba(0, 0, 0, 0.14), 0 0 30px 5px rgba(0, 0, 0, 0.12);
-
     transform: translate(101vw);
 
-    -ms-flex: 0 0 100%;
-    flex: 0 0 100%;
-    max-width: 100%;
-    -webkit-box-flex: 0;
+    padding: 0 1rem;
+    @include media-breakpoint-up(md) {
+      padding: 0 2rem;
+    }
 
     &.pane-sm {
       width: 100%;
@@ -43,15 +104,13 @@ $pane-header-height: 72px;
     &::before {
       content: '';
       position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
+      top: 0; right: 0; bottom: 0; left: 0;
+      
       opacity: 0;
       background: black;
       transition: opacity .6s cubic-bezier(.25, .8, .25, 1);
       visibility: hidden;
-      z-index: 1066;
+      z-index: $zindex-beforepane;
     }
 
     + .pane {
@@ -65,55 +124,17 @@ $pane-header-height: 72px;
       transform: translate(calc(100vw - 100%));
       + .is-visible {
         transform: translate(0);
-        z-index: 1065;
+        z-index: $zindex-panevisible;
       }
 
       &:nth-child(2) {
-        z-index: 1066;
+        z-index: $zindex-panevisible + 1;
         overflow: hidden;
         pointer-events: none;
       }
     }
 
-    // Content
-    .pane-content {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-
-      // Header
-      .pane-header {
-        z-index: 60;
-        min-height: $pane-header-height;
-        padding: 0 15px;
-        background-color: white;
-        .title {
-          font-size: 1.75rem;
-          margin-bottom: 0;
-        }
-        .btn-close {
-          background-color: transparent;
-          font-size: 2rem;
-          padding-left: 0;
-        }
-
-        + * {
-          flex-grow: 2;
-        }
-      }
-
-      // Body
-      .pane-body {
-        position: relative;
-        z-index: 0;
-        width: 100%;
-        padding: 2.3rem 15px;
-        margin-right: auto;
-        margin-left: auto;
-        overflow-y: auto;
-        flex-grow: 2;
-      }
-    }
+    
 
     // Loader
     .pane-loader {
@@ -124,7 +145,7 @@ $pane-header-height: 72px;
       top: 31%;
       left: 50%;
       text-align: center;
-      z-index: 9999;
+      z-index: $zindex-paneloader;
 
       -webkit-animation: sk-rotate 2.0s infinite linear;
       animation: sk-rotate 2.0s infinite linear;
@@ -154,7 +175,7 @@ $pane-header-height: 72px;
 
   > .pane {
     &:first-child {
-      z-index: 1067;
+      z-index: $zindex-panefirst;
     }
   }
 
@@ -162,15 +183,12 @@ $pane-header-height: 72px;
     content: '';
     display: block;
     position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
     opacity: 0;
     transition: opacity .3s cubic-bezier(.25, .8, .25, 1);
     background: black;
     visibility: hidden;
-    z-index: 41;
+    z-index: $zindex-pane;
   }
 
   &.is-open {
@@ -184,10 +202,7 @@ $pane-header-height: 72px;
     .pane {
       &.is-visible {
         transform: none;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: inherit;
+        top: 0; right: 0; bottom: 0; left: inherit;
       }
     }
   }
@@ -243,4 +258,46 @@ $pane-header-height: 72px;
     transform: scale(1.0);
     -webkit-transform: scale(1.0);
   }
+}
+
+@include media-breakpoint-up(md) {
+  .pane-header {
+    // height: 4rem; 64px
+    // padding: 0 24px;
+    // &__line-top {
+    //   height: $height--pane-header__line-top;
+    // }
+    
+    &__line-bottom {
+      // .filter__list {
+      //   padding-right: 24px; padding-left: 24px;
+      // }
+      .filters__container {
+        height: $height--filters__container;
+      }
+    }
+  
+    &__title {
+    }
+    &__list {
+    }
+  }
+  .pane-body {
+    // liens pr réaliser une action sous les tableaux
+    &__link {}
+  
+    // gestion des deux panneaux sur la 1re page de chq univers
+    &__left {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; bottom: 0;
+        border-right: 1px solid $white;
+      }
+    }
+    &__right {
+      display: block;
+      padding: 35px;
+    }
+  }   
 }
