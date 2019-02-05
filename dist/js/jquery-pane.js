@@ -1,5 +1,5 @@
 /*!
-  * jQuery Pane v1.0.0 (https://github.com/ElGigi/jQueryPane#readme)
+  * jQuery Pane v1.0.0-alpha.1 (https://github.com/ElGigi/jQueryPane#readme)
   * Copyright 2018 jQuery Pane Authors (https://github.com/ElGigi/jQueryPane/graphs/contributors)
   * Licensed under MIT (https://github.com/ElGigi/jQueryPane/blob/master/LICENSE)
   */
@@ -147,7 +147,7 @@
     var Selector = {
       WRAPPER: '.pane-wrapper:first',
       LOADER: '.pane-loader',
-      PANE: '.pane',
+      PANE: '.pane:not(.pane-static)',
       FORM: 'form:not([target])',
       SUBMIT: 'form:not([target]) :submit[name]',
       DATA_TOGGLE: '[data-toggle="pane"]',

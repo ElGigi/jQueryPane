@@ -10,8 +10,9 @@
  * file that was distributed with this source code, to the root.
  */
 
-@import "variables";
-@import "pane";
-@import "wrapper";
-@import "loader";
-@import "triggers";
+// Triggers
+
+[data-toggle="pane"],
+[data-dismiss="pane"] {
+  cursor: pointer;
+}

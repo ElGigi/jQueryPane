@@ -1,0 +1,85 @@
+/*!
+ * This file is part of jQuery Pane.
+ *
+ * @license   https://opensource.org/licenses/MIT MIT License
+ * @copyright 2018
+ * @author Cassie ROUSSEAU <https://github.com/K6-front>
+ * @author Ronan GIRON <https://github.com/ElGigi>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code, to the root.
+ */
+
+// Loader
+
+.pane-loader {
+  margin: 100px auto;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 31%;
+  left: 50%;
+  text-align: center;
+  z-index: $pane-loader-zindex;
+
+  -webkit-animation: sk-rotate 2.0s infinite linear;
+  animation: sk-rotate 2.0s infinite linear;
+
+  &::before,
+  &::after {
+    content: '';
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    background-color: #333;
+    border-radius: 100%;
+
+    -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+    animation: sk-bounce 2.0s infinite ease-in-out;
+  }
+
+  &::after {
+    top: auto;
+    bottom: -10px;
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+  }
+}
+
+
+// Animations
+
+@-webkit-keyframes sk-rotate {
+  100% {
+    -webkit-transform: rotate(360deg)
+  }
+}
+
+@keyframes sk-rotate {
+  100% {
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg)
+  }
+}
+
+@-webkit-keyframes sk-bounce {
+  0%, 100% {
+    -webkit-transform: scale(0.0)
+  }
+  50% {
+    -webkit-transform: scale(1.0)
+  }
+}
+
+@keyframes sk-bounce {
+  0%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  }
+  50% {
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}

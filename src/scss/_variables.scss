@@ -10,8 +10,12 @@
  * file that was distributed with this source code, to the root.
  */
 
-@import "variables";
-@import "pane";
-@import "wrapper";
-@import "loader";
-@import "triggers";
+// Variables
+
+$pane-width: 83.33333% !default;
+$pane-breakpoint: 768px !default;
+$pane-bgcolor: #eee !default;
+$pane-header-zindex: 100 !default;
+$pane-header-height: 4rem !default;
+$pane-zindex: 1060 !default;
+$pane-loader-zindex: 1060 !default;

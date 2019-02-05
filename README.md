@@ -7,15 +7,12 @@
 Default HTML structure of pane: 
 ```html
 <div class="pane">
-  <div class="pane-content">
-    <div class="pane-title">
-      <button type="button" data-dismiss="pane">X</button>
-      <h2 class="title">My pane title</h2>
-    </div>
-    <div class="pane-body">
-      ...
-    </div>
+  <div class="pane-header">
+    <button type="button" data-dismiss="pane">X</button>
+    <h2 class="pane-header__title">My pane title</h2>
   </div>
+
+  ...
 </div>
 ```
 
