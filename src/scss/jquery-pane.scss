@@ -16,9 +16,6 @@ $pane-header-height: 72px;
 .pane-wrapper {
   .pane {
     min-height: 1px;
-    -moz-transition: -moz-transform .4s;
-    -o-transition: -o-transform .4s;
-    -webkit-transition: -webkit-transform .4s;
     transition: transform .4s;
     background: #eee;
     bottom: 0;
@@ -30,18 +27,6 @@ $pane-header-height: 72px;
     width: 100%;
     z-index: 1061;
 
-    -ms-flex-direction: column;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -ms-flex-wrap: nowrap;
-    -webkit-flex-wrap: nowrap;
-    flex-wrap: nowrap;
-
     box-shadow: 0 0 10px -5px rgba(0, 0, 0, 0.2), 0 0 24px 2px rgba(0, 0, 0, 0.14), 0 0 30px 5px rgba(0, 0, 0, 0.12);
 
     transform: translate(101vw);
@@ -52,10 +37,7 @@ $pane-header-height: 72px;
     -webkit-box-flex: 0;
 
     &.pane-sm {
-      -ms-flex: 0 0 100%;
-      flex: 0 0 100%;
-      max-width: 100%;
-      -webkit-box-flex: 0;
+      width: 100%;
     }
 
     &::before {
@@ -215,15 +197,9 @@ $pane-header-height: 72px;
 @media (min-width: 768px) {
   .pane-wrapper {
     .pane {
-      -ms-flex: 0 0 83.33333%;
-      flex: 0 0 83.33333%;
-      max-width: 83.33333%;
-      -webkit-box-flex: 0;
+      width: 83.33333%;
       &.pane-sm {
-        -ms-flex: 0 0 33.3333%;
-        flex: 0 0 33.3333%;
-        max-width: 33.3333%;
-        -webkit-box-flex: 0;
+        width: 33.3333%;
       }
     }
   }
