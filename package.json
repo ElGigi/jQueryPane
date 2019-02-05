@@ -1,6 +1,6 @@
 {
   "name": "jquery-pane",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "main": "dist/js/jquery-pane",
   "style": "dist/css/jquery-pane.css",
