@@ -82,7 +82,7 @@ const PaneManager = (($) => {
   const Selector = {
     WRAPPER: '.pane-wrapper:first',
     LOADER: '.pane-loader',
-    PANE: '.pane',
+    PANE: '.pane:not(.pane-static)',
     FORM: 'form:not([target])',
     SUBMIT: 'form:not([target]) :submit[name]',
     DATA_TOGGLE: '[data-toggle="pane"]',

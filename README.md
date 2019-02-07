@@ -1,5 +1,8 @@
 # jQuery Pane
 
+jQuery plugin to manage sliding and overlaid content panels.
+Panels take main part of window and the full size in mobile.
+
 ## Usage
 
 ### HTML
@@ -7,15 +10,12 @@
 Default HTML structure of pane: 
 ```html
 <div class="pane">
-  <div class="pane-content">
-    <div class="pane-title">
-      <button type="button" data-dismiss="pane">X</button>
-      <h2 class="title">My pane title</h2>
-    </div>
-    <div class="pane-body">
-      ...
-    </div>
+  <div class="pane-header">
+    <button type="button" data-dismiss="pane">X</button>
+    <h2 class="pane-header__title">My pane title</h2>
   </div>
+
+  ...
 </div>
 ```
 
@@ -60,8 +60,8 @@ Button example:
 - `hide.pane`: This event fires immediately when close action is detected 
 - `hidden.pane`: This event is fired when the pane is completely hidden to the user (animations included)
 - `loading.content.pane`: This event fires immediately when AJAX content start to loading
-- `loaded.content.pane`: This event fires is fired when AJAX content is loaded
-- `printed.content.pane`: This event fires is fired when text content of AJAX result is printed
+- `loaded.content.pane`: This event is fired when AJAX content is loaded
+- `printed.content.pane`: This event is fired when text content of AJAX result is printed
 - `error.content.pane`: This event fires immediately when AJAX error occurred
 
 ## API

@@ -1,0 +1,41 @@
+/*!
+ * This file is part of jQuery Pane.
+ *
+ * @license   https://opensource.org/licenses/MIT MIT License
+ * @copyright 2018
+ * @author Cassie ROUSSEAU <https://github.com/K6-front>
+ * @author Ronan GIRON <https://github.com/ElGigi>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code, to the root.
+ */
+
+// Pane
+
+.pane {
+  display: block;
+  padding: 0 1.5rem;
+  overflow-y: auto;
+  background-color: $pane-bgcolor;
+
+  // Header
+  .pane-header {
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: $pane-header-zindex;
+    height: $pane-header-height;
+    margin: 0 -1.5rem 1.5rem;
+    padding: 0 1.5rem;
+    background-color: white;
+
+    &__title {
+      margin-bottom: 0;
+      padding: $pane-header-height / 2 0;
+      font-size: 1.5rem;
+      line-height: $pane-header-height / 2;
+      text-overflow: ellipsis;
+    }
+  }
+}
