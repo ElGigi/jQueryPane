@@ -1,5 +1,5 @@
 /*!
-  * jQuery Pane v1.0.0-alpha.1 (https://github.com/ElGigi/jQueryPane#readme)
+  * jQuery Pane v1.0.0-alpha.3 (https://github.com/ElGigi/jQueryPane#readme)
   * Copyright 2018 jQuery Pane Authors (https://github.com/ElGigi/jQueryPane/graphs/contributors)
   * Licensed under MIT (https://github.com/ElGigi/jQueryPane/blob/master/LICENSE)
   */
