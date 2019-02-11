@@ -257,16 +257,16 @@ const PaneManager = (($) => {
       )
     }
 
-    reload() {
-      this.load(this._href)
+    reload(fragments) {
+      this.load(this._href, fragments)
     }
 
-    load(href) {
+    load(href, fragments) {
       if (typeof href !== 'string') {
         throw new TypeError('Pane::load() method need href in first argument')
       }
 
-      this._ajax({url: href})
+      this._ajax({url: href}, fragments)
       this._href = href
     }
 
@@ -413,7 +413,7 @@ const PaneManager = (($) => {
       }
     }
 
-    _ajax(options) {
+    _ajax(options, fragments) {
       if (this._jqXHR) {
         return
       }
@@ -443,6 +443,7 @@ const PaneManager = (($) => {
                                         data: data,
                                         textStatus: textStatus,
                                         jqXHR: jqXHR,
+                                        fragments: fragments || null,
                                       }
                                     })
 
@@ -453,7 +454,12 @@ const PaneManager = (($) => {
           }
 
           if (!eventLoaded.isPropagationStopped()) {
-            pane._element.html(jqXHR.responseText)
+            if (fragments) {
+              $(fragments, pane._element).first().html($(jqXHR.responseText).find(fragments).html())
+            } else {
+              pane._element.html(jqXHR.responseText)
+            }
+
             pane._element.trigger(Event.PRINTED, pane._element)
             if (pane._manager.config('debug')) {
               console.debug('Triggered event:', Event.PRINTED)
@@ -473,6 +479,7 @@ const PaneManager = (($) => {
                                               errorThrown: errorThrown,
                                             }
                                           })
+
           // Event trigger
           pane._element.trigger(eventLoadingError)
           if (pane._manager.config('debug')) {
@@ -489,7 +496,7 @@ const PaneManager = (($) => {
       this._jqXHR = $.ajax(options)
     }
 
-    static _jQueryInterface(action, arg1) {
+    static _jQueryInterface(action, arg1, arg2) {
       return this.each(function () {
         if (!(typeof $(this).data('pane') === 'object' && $(this).data('pane') instanceof Pane)) {
           throw new Error('Not a pane')
@@ -502,7 +509,7 @@ const PaneManager = (($) => {
             case 'close':
             case 'load':
             case 'reload':
-              pane[action](arg1)
+              pane[action](arg1, arg2)
               break
             default:
               throw new TypeError(`No method named "${action}"`)

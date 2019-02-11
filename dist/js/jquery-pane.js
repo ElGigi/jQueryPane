@@ -1,13 +1,13 @@
 /*!
-  * jQuery Pane v1.0.0-alpha.3 (https://github.com/ElGigi/jQueryPane#readme)
+  * jQuery Pane v1.0.0-alpha.4 (https://github.com/ElGigi/jQueryPane#readme)
   * Copyright 2018 jQuery Pane Authors (https://github.com/ElGigi/jQueryPane/graphs/contributors)
   * Licensed under MIT (https://github.com/ElGigi/jQueryPane/blob/master/LICENSE)
   */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jquery')) :
   typeof define === 'function' && define.amd ? define(['jquery'], factory) :
-  (global.Pane = factory(global.jQuery));
-}(this, (function ($) { 'use strict';
+  (global = global || self, global.Pane = factory(global.jQuery));
+}(this, function ($) { 'use strict';
 
   $ = $ && $.hasOwnProperty('default') ? $['default'] : $;
 
@@ -333,19 +333,19 @@
         }
       }, {
         key: "reload",
-        value: function reload() {
-          this.load(this._href);
+        value: function reload(fragments) {
+          this.load(this._href, fragments);
         }
       }, {
         key: "load",
-        value: function load(href) {
+        value: function load(href, fragments) {
           if (typeof href !== 'string') {
             throw new TypeError('Pane::load() method need href in first argument');
           }
 
           this._ajax({
             url: href
-          });
+          }, fragments);
 
           this._href = href;
         }
@@ -478,7 +478,7 @@
         }
       }, {
         key: "_ajax",
-        value: function _ajax(options) {
+        value: function _ajax(options, fragments) {
           if (this._jqXHR) {
             return;
           }
@@ -507,7 +507,8 @@
                 paneAjax: {
                   data: data,
                   textStatus: textStatus,
-                  jqXHR: jqXHR
+                  jqXHR: jqXHR,
+                  fragments: fragments || null
                 }
               }); // Event trigger
 
@@ -518,7 +519,11 @@
               }
 
               if (!eventLoaded.isPropagationStopped()) {
-                pane._element.html(jqXHR.responseText);
+                if (fragments) {
+                  $$$1(fragments, pane._element).first().html($$$1(jqXHR.responseText).find(fragments).html());
+                } else {
+                  pane._element.html(jqXHR.responseText);
+                }
 
                 pane._element.trigger(Event.PRINTED, pane._element);
 
@@ -557,7 +562,7 @@
         }
       }], [{
         key: "_jQueryInterface",
-        value: function _jQueryInterface(action, arg1) {
+        value: function _jQueryInterface(action, arg1, arg2) {
           return this.each(function () {
             if (!(_typeof($$$1(this).data('pane')) === 'object' && $$$1(this).data('pane') instanceof Pane)) {
               throw new Error('Not a pane');
@@ -570,7 +575,7 @@
                 case 'close':
                 case 'load':
                 case 'reload':
-                  pane[action](arg1);
+                  pane[action](arg1, arg2);
                   break;
 
                 default:
@@ -598,5 +603,5 @@
 
   return PaneManager;
 
-})));
+}));
 //# sourceMappingURL=jquery-pane.js.map
