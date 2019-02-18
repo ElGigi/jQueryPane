@@ -232,10 +232,10 @@
 
 
           if (!pane) {
-            pane = this.new($$$1(relatedTarget).data('paneClass') || '');
+            pane = this.new($$$1(relatedTarget).data('pane') || '');
           }
 
-          pane.load(href);
+          pane.load(href, $$$1(relatedTarget).data('paneLoadOptions'));
           return pane;
         }
       }, {
@@ -283,6 +283,7 @@
         this._isTransitioning = false;
         this._element = null;
         this._href = null;
+        this._loadOptions = {};
         this._element = $$$1('<div role="complementary" class="pane"></div>');
 
         this._element.data('pane', this);
@@ -334,20 +335,26 @@
       }, {
         key: "reload",
         value: function reload(fragments) {
-          this.load(this._href, fragments);
+          this.load(this._href, null, fragments);
         }
       }, {
         key: "load",
-        value: function load(href, fragments) {
+        value: function load(href, loadOptions, fragments) {
           if (typeof href !== 'string') {
             throw new TypeError('Pane::load() method need href in first argument');
-          }
+          } // Set to private properties
 
-          this._ajax({
-            url: href
-          }, fragments);
 
           this._href = href;
+
+          if (_typeof(loadOptions) === 'object') {
+            this._loadOptions = loadOptions;
+          } // Load content with AJAX
+
+
+          this._ajax(_objectSpread({
+            url: this._href
+          }, this._loadOptions), fragments);
         }
       }, {
         key: "close",

@@ -183,9 +183,9 @@ const PaneManager = (($) => {
 
       // Need to create pane?
       if (!pane) {
-        pane = this.new($(relatedTarget).data('paneClass') || '')
+        pane = this.new($(relatedTarget).data('pane') || '')
       }
-      pane.load(href)
+      pane.load(href, $(relatedTarget).data('paneLoadOptions'))
 
       return pane
     }
@@ -210,6 +210,7 @@ const PaneManager = (($) => {
       this._isTransitioning = false
       this._element = null
       this._href = null
+      this._loadOptions = {}
 
       this._element = $('<div role="complementary" class="pane"></div>')
       this._element.data('pane', this)
@@ -258,16 +259,28 @@ const PaneManager = (($) => {
     }
 
     reload(fragments) {
-      this.load(this._href, fragments)
+      this.load(this._href, null, fragments)
     }
 
-    load(href, fragments) {
+    load(href, loadOptions, fragments) {
       if (typeof href !== 'string') {
         throw new TypeError('Pane::load() method need href in first argument')
       }
 
-      this._ajax({url: href}, fragments)
+      // Set to private properties
       this._href = href
+      if (typeof loadOptions === 'object') {
+        this._loadOptions = loadOptions
+      }
+
+      // Load content with AJAX
+      this._ajax(
+        {
+          url: this._href,
+          ...this._loadOptions,
+        },
+        fragments
+      )
     }
 
     close() {
