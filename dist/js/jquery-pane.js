@@ -81,9 +81,9 @@
     return target;
   }
 
-  var PaneManager = function ($$$1) {
+  var PaneManager = function ($) {
     // Check jQuery requirements
-    if (typeof $$$1 === 'undefined') {
+    if (typeof $ === 'undefined') {
       throw new TypeError('jQuery Pane requires jQuery. jQuery must be included before.');
     }
     /**
@@ -180,7 +180,7 @@
         key: "refresh",
         // Public
         value: function refresh() {
-          this._wrapper.toggleClass('is-open', $$$1(Selector.PANE, this._wrapper).length > 0);
+          this._wrapper.toggleClass('is-open', $(Selector.PANE, this._wrapper).length > 0);
         }
       }, {
         key: "config",
@@ -203,7 +203,7 @@
         key: "_events",
         value: function _events() {
           var manager = this;
-          $$$1(document).off(Event.CLICK_DATA_API, Selector.DATA_TOGGLE).on(Event.CLICK_DATA_API, Selector.DATA_TOGGLE, function (event) {
+          $(document).off(Event.CLICK_DATA_API, Selector.DATA_TOGGLE).on(Event.CLICK_DATA_API, Selector.DATA_TOGGLE, function (event) {
             event.preventDefault(); // Debug
 
             if (manager.config('debug')) {
@@ -217,8 +217,8 @@
         key: "_pane",
         value: function _pane(relatedTarget) {
           var pane = null,
-              href = $$$1(relatedTarget).data('href') || $$$1(relatedTarget).attr('href'),
-              target = $$$1(relatedTarget).data('paneTarget') || '';
+              href = $(relatedTarget).data('href') || $(relatedTarget).attr('href'),
+              target = $(relatedTarget).data('paneTarget') || '';
 
           if (!href) {
             console.error('Pane has no href to load content');
@@ -227,15 +227,15 @@
 
 
           if (target === 'self') {
-            pane = $$$1(relatedTarget).parents(Selector.PANE).data('pane');
+            pane = $(relatedTarget).parents(Selector.PANE).data('pane');
           } // Need to create pane?
 
 
           if (!pane) {
-            pane = this.new($$$1(relatedTarget).data('pane') || '');
+            pane = this["new"]($(relatedTarget).data('pane') || '');
           }
 
-          pane.load(href, $$$1(relatedTarget).data('paneLoadOptions'));
+          pane.load(href, $(relatedTarget).data('paneLoadOptions'));
           return pane;
         }
       }, {
@@ -248,11 +248,11 @@
         key: "wrapper",
         get: function get() {
           if (!this._wrapper) {
-            this._wrapper = $$$1(Selector.WRAPPER);
+            this._wrapper = $(Selector.WRAPPER);
 
             if (this._wrapper.length === 0) {
-              this._wrapper = $$$1('<div class="pane-wrapper"></div>');
-              $$$1(this._config.container).append(this._wrapper);
+              this._wrapper = $('<div class="pane-wrapper"></div>');
+              $(this._config.container).append(this._wrapper);
             } // Internet explorer
 
 
@@ -284,7 +284,7 @@
         this._element = null;
         this._href = null;
         this._loadOptions = {};
-        this._element = $$$1('<div role="complementary" class="pane"></div>');
+        this._element = $('<div role="complementary" class="pane"></div>');
 
         this._element.data('pane', this);
 
@@ -366,7 +366,7 @@
           var pane = this,
               manager = this._manager; // Event trigger
 
-          var eventClose = $$$1.Event(Event.HIDE, {
+          var eventClose = $.Event(Event.HIDE, {
             pane: pane._element
           });
 
@@ -410,20 +410,20 @@
             pane.close();
           }) // Submit buttons
           .off(Event.CLICK_DATA_API, Selector.SUBMIT).on(Event.CLICK_DATA_API, Selector.SUBMIT, function () {
-            var $form = $$$1(this).parents('form');
+            var $form = $(this).parents('form');
             $form.data('submitButton', {
-              'name': $$$1(this).attr('name'),
-              'value': $$$1(this).val(),
-              'novalidate': $$$1(this).attr('formnovalidate') !== undefined
+              'name': $(this).attr('name'),
+              'value': $(this).val(),
+              'novalidate': $(this).attr('formnovalidate') !== undefined
             });
           }) // Submit form
           .off(Event.SUBMIT_DATA_API, Selector.FORM).on(Event.SUBMIT_DATA_API, Selector.FORM, function (event) {
             event.preventDefault();
-            var $form = $$$1(this); // Submit button
+            var $form = $(this); // Submit button
 
             var submitButton = null;
 
-            if ($$$1.isPlainObject($form.data('submitButton'))) {
+            if ($.isPlainObject($form.data('submitButton'))) {
               submitButton = $form.data('submitButton');
             }
 
@@ -438,8 +438,8 @@
 
 
               pane._ajax({
-                url: $$$1(this).attr('action') || pane._href,
-                method: $$$1(this).attr('method') || 'get',
+                url: $(this).attr('action') || pane._href,
+                method: $(this).attr('method') || 'get',
                 processData: false,
                 contentType: false,
                 data: formData,
@@ -456,12 +456,12 @@
         value: function _serializeForm(form) {
           var formData = new FormData(),
               formParams = form.serializeArray();
-          $$$1.each(form.find('input[type="file"]'), function (i, tag) {
-            $$$1.each($$$1(tag)[0].files, function (i, file) {
+          $.each(form.find('input[type="file"]'), function (i, tag) {
+            $.each($(tag)[0].files, function (i, file) {
               formData.append(tag.name, file);
             });
           });
-          $$$1.each(formParams, function (i, val) {
+          $.each(formParams, function (i, val) {
             formData.append(val.name, val.value);
           });
           return formData;
@@ -472,15 +472,15 @@
           toggle = typeof toggle === 'boolean' ? toggle : true;
 
           if (toggle) {
-            var $loader = $$$1(Selector.LOADER, this._element);
+            var $loader = $(Selector.LOADER, this._element);
 
             if ($loader.length === 0) {
-              $loader = $$$1('<div class="pane-loader"></div>');
+              $loader = $('<div class="pane-loader"></div>');
               $loader.append(this._manager.config('loader'));
-              $$$1(this._element).prepend($loader);
+              $(this._element).prepend($loader);
             }
           } else {
-            $$$1(Selector.LOADER, this._element).remove();
+            $(Selector.LOADER, this._element).remove();
           }
         }
       }, {
@@ -509,7 +509,7 @@
 
               pane._loader(false);
 
-              var eventLoaded = $$$1.Event(Event.LOADED, {
+              var eventLoaded = $.Event(Event.LOADED, {
                 pane: pane._element,
                 paneAjax: {
                   data: data,
@@ -527,7 +527,7 @@
 
               if (!eventLoaded.isPropagationStopped()) {
                 if (fragments) {
-                  $$$1(fragments, pane._element).first().html($$$1(jqXHR.responseText).find(fragments).html());
+                  $(fragments, pane._element).first().html($(jqXHR.responseText).find(fragments).html());
                 } else {
                   pane._element.html(jqXHR.responseText);
                 }
@@ -544,7 +544,7 @@
 
               pane._loader(false);
 
-              var eventLoadingError = $$$1.Event(Event.LOADING_ERROR, {
+              var eventLoadingError = $.Event(Event.LOADING_ERROR, {
                 pane: pane._element,
                 paneAjax: {
                   textStatus: textStatus,
@@ -565,18 +565,18 @@
             } // Ajax
 
           });
-          this._jqXHR = $$$1.ajax(options);
+          this._jqXHR = $.ajax(options);
         }
       }], [{
         key: "_jQueryInterface",
         value: function _jQueryInterface(action, arg1, arg2) {
           return this.each(function () {
-            if (!(_typeof($$$1(this).data('pane')) === 'object' && $$$1(this).data('pane') instanceof Pane)) {
+            if (!(_typeof($(this).data('pane')) === 'object' && $(this).data('pane') instanceof Pane)) {
               throw new Error('Not a pane');
             }
 
             if (typeof action === 'string') {
-              var pane = $$$1(this).data('pane');
+              var pane = $(this).data('pane');
 
               switch (action) {
                 case 'close':
@@ -597,9 +597,9 @@
     }(); // jQuery
 
 
-    $$$1.fn['pane'] = Pane._jQueryInterface;
+    $.fn['pane'] = Pane._jQueryInterface;
 
-    $$$1.fn['pane'].noConflict = function () {
+    $.fn['pane'].noConflict = function () {
       return Pane._jQueryInterface;
     };
 
