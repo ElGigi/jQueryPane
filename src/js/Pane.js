@@ -145,6 +145,10 @@ const PaneManager = (($) => {
       return pane
     }
 
+    newStatic(element, href) {
+      return new Pane(this, element, href)
+    }
+
     // Private
 
     _events() {
@@ -204,22 +208,33 @@ const PaneManager = (($) => {
    * Pane
    */
   class Pane {
-    constructor(paneManager) {
+    constructor(paneManager, element, href) {
       this._manager = paneManager
       this._jqXHR = null
       this._isTransitioning = false
+      this._isStatic = true
       this._element = null
-      this._href = null
+      this._href = href || null
       this._loadOptions = {}
 
-      this._element = $('<div role="complementary" class="pane"></div>')
+      // if no element given in argument
+      this._element = element
+      if (!this._element) {
+        this._element = $('<div role="complementary" class="pane"></div>')
+        this._isStatic = false
+      }
       this._element.data('pane', this)
+
       this._events()
     }
 
     // Public
 
     open(className) {
+      if (this._isStatic) {
+        return
+      }
+
       if (this._isTransitioning) {
         return
       }
@@ -284,6 +299,10 @@ const PaneManager = (($) => {
     }
 
     close() {
+      if (this._isStatic) {
+        return
+      }
+
       if (this._isTransitioning) {
         return
       }
