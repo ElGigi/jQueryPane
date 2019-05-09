@@ -187,7 +187,7 @@ const PaneManager = (($) => {
 
       // Need to create pane?
       if (!pane) {
-        pane = this.new($(relatedTarget).data('pane') || '')
+        pane = this.new($(relatedTarget).data('paneClass') || '')
       }
       pane.load(href, $(relatedTarget).data('paneLoadOptions'))
 
