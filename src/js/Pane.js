@@ -83,6 +83,7 @@ const PaneManager = (($) => {
     WRAPPER: '.pane-wrapper:first',
     LOADER: '.pane-loader',
     PANE: '.pane',
+    PANE_NOT_STATIC: '.pane:not(.pane-static)',
     FORM: 'form:not([target])',
     SUBMIT: 'form:not([target]) :submit[name]',
     DATA_TOGGLE: '[data-toggle="pane"]',
@@ -127,7 +128,7 @@ const PaneManager = (($) => {
     // Public
 
     refresh() {
-      this._wrapper.toggleClass('is-open', $(Selector.PANE, this._wrapper).length > 0)
+      this._wrapper.toggleClass('is-open', $(Selector.PANE_NOT_STATIC, this._wrapper).length > 0)
     }
 
     config(key) {
