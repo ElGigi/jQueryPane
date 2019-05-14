@@ -82,7 +82,7 @@ const PaneManager = (($) => {
   const Selector = {
     WRAPPER: '.pane-wrapper:first',
     LOADER: '.pane-loader',
-    PANE: '.pane:not(.pane-static)',
+    PANE: '.pane',
     FORM: 'form:not([target])',
     SUBMIT: 'form:not([target]) :submit[name]',
     DATA_TOGGLE: '[data-toggle="pane"]',
@@ -226,6 +226,12 @@ const PaneManager = (($) => {
       this._element.data('pane', this)
 
       this._events()
+    }
+
+    // Getters
+
+    get location() {
+      return new URL(this._href, document.location.toString())
     }
 
     // Public
