@@ -235,6 +235,12 @@ const PaneManager = (($) => {
       return new URL(this._href, document.location.toString())
     }
 
+    // Setters
+
+    set location(location) {
+      this._href = location.toString()
+    }
+
     // Public
 
     open(className) {
