@@ -161,6 +161,7 @@ const PaneManager = (($) => {
             Selector.DATA_TOGGLE,
             function (event) {
               event.preventDefault()
+              event.stopPropagation()
 
               // Debug
               if (manager.config('debug')) {
