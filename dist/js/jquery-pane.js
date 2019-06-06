@@ -593,6 +593,10 @@
         key: "location",
         get: function get() {
           return new URL(this._href, document.location.toString());
+        } // Setters
+        ,
+        set: function set(location) {
+          this._href = location.toString();
         }
       }], [{
         key: "_jQueryInterface",
