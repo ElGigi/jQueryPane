@@ -210,7 +210,8 @@
         value: function _events() {
           var manager = this;
           $(document).off(Event.CLICK_DATA_API, Selector.DATA_TOGGLE).on(Event.CLICK_DATA_API, Selector.DATA_TOGGLE, function (event) {
-            event.preventDefault(); // Debug
+            event.preventDefault();
+            event.stopPropagation(); // Debug
 
             if (manager.config('debug')) {
               console.debug('Selector', Selector.DATA_TOGGLE, 'has been clicked');
