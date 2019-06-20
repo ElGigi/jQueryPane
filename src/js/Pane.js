@@ -117,9 +117,7 @@ const PaneManager = (($) => {
         }
 
         // Internet explorer
-        if (!this._wrapper.hasClass('pane-ie') && GetIEVersion() > 0) {
-          this._wrapper.addClass('pane-ie')
-        }
+        this._wrapper.toggleClass('pane-ie', GetIEVersion() > 0)
       }
 
       return this._wrapper
@@ -139,15 +137,8 @@ const PaneManager = (($) => {
       return this._config[key]
     }
 
-    new(paneClass) {
-      let pane = new Pane(this)
-      pane.open(paneClass || '')
-
-      return pane
-    }
-
-    newStatic(element, href) {
-      return new Pane(this, element, href)
+    new() {
+      return new Pane(this)
     }
 
     // Private
@@ -189,8 +180,10 @@ const PaneManager = (($) => {
 
       // Need to create pane?
       if (!pane) {
-        pane = this.new($(relatedTarget).data('paneClass') || '')
+        pane = this.new()
       }
+      pane.relatedTarget = relatedTarget
+      pane.open()
       pane.load(href, $(relatedTarget).data('paneLoadOptions'))
 
       return pane
@@ -210,27 +203,36 @@ const PaneManager = (($) => {
    * Pane
    */
   class Pane {
-    constructor(paneManager, element, href) {
+    constructor(paneManager) {
       this._manager = paneManager
       this._jqXHR = null
       this._isTransitioning = false
-      this._isStatic = true
-      this._element = null
-      this._href = href || null
+      this._isStatic = false
+      this._relatedTarget = null
+      this._href = null
       this._loadOptions = {}
-
-      // if no element given in argument
-      this._element = element
-      if (!this._element) {
-        this._element = $('<div role="complementary" class="pane"></div>')
-        this._isStatic = false
-      }
-      this._element.data('pane', this)
-
-      this._events()
     }
 
     // Getters
+
+    get relatedTarget() {
+      return this._relatedTarget
+    }
+
+    get element() {
+      if (!this._element) {
+        // Default element
+        this._element = $('<div role="complementary" class="pane"></div>')
+        this._element.data('pane', this)
+        this._events()
+      }
+
+      return this._element
+    }
+
+    get static() {
+      return this._isStatic
+    }
 
     get location() {
       return new URL(this._href, document.location.toString())
@@ -238,13 +240,28 @@ const PaneManager = (($) => {
 
     // Setters
 
+    set relatedTarget(relatedTarget) {
+      this._relatedTarget = relatedTarget
+    }
+
+    set element(element) {
+      this._element = element
+      this._isStatic = true
+      this._element.data('pane', this)
+      this._events()
+    }
+
+    set static(isStatic) {
+      this._isStatic = isStatic === true
+    }
+
     set location(location) {
       this._href = location.toString()
     }
 
     // Public
 
-    open(className) {
+    open() {
       if (this._isStatic) {
         return
       }
@@ -255,36 +272,34 @@ const PaneManager = (($) => {
 
       let pane = this
 
-      // Size?
-      if (typeof className === 'string') {
-        pane._element.addClass(className)
-      }
-
-      this._isTransitioning = true
-      this._manager.wrapper.prepend(this._element)
-      this._manager.refresh()
-
       // Event trigger
-      pane._element.trigger(Event.SHOW)
+      let eventShow = $.Event(Event.SHOW, {pane: pane})
+      pane.element.trigger(eventShow)
       if (pane._manager.config('debug')) {
         console.debug('Triggered event:', Event.SHOW)
       }
 
-      // Animation
-      setTimeout(
-        function () {
-          pane._element.addClass('is-visible')
+      if (!eventShow.isPropagationStopped()) {
+        this._isTransitioning = true
+        this._manager.wrapper.prepend(this.element)
+        this._manager.refresh()
 
-          // Event trigger
-          pane._element.trigger(Event.SHOWN)
-          if (pane._manager.config('debug')) {
-            console.debug('Triggered event:', Event.SHOWN)
-          }
+        // Animation
+        setTimeout(
+          function () {
+            pane.element.addClass('is-visible')
 
-          pane._isTransitioning = false
-        },
-        50
-      )
+            pane._isTransitioning = false
+
+            // Event trigger
+            pane.element.trigger(Event.SHOWN)
+            if (pane._manager.config('debug')) {
+              console.debug('Triggered event:', Event.SHOWN)
+            }
+          },
+          50
+        )
+      }
     }
 
     reload(fragments) {
@@ -297,7 +312,7 @@ const PaneManager = (($) => {
       }
 
       // Set to private properties
-      this._href = href
+      this._href = href.toString()
       if (typeof loadOptions === 'object') {
         this._loadOptions = loadOptions
       }
@@ -325,8 +340,8 @@ const PaneManager = (($) => {
         manager = this._manager
 
       // Event trigger
-      let eventClose = $.Event(Event.HIDE, {pane: pane._element})
-      pane._element.trigger(eventClose)
+      let eventClose = $.Event(Event.HIDE, {pane: pane.element})
+      pane.element.trigger(eventClose)
       if (pane._manager.config('debug')) {
         console.debug('Triggered event:', Event.HIDE)
       }
@@ -334,16 +349,16 @@ const PaneManager = (($) => {
       if (!eventClose.isPropagationStopped()) {
         // Animation
         this._isTransitioning = true
-        pane._element.removeClass('is-visible')
+        pane.element.removeClass('is-visible')
 
         // After animation
         setTimeout(
           function () {
-            pane._element.remove()
+            pane.element.remove()
             manager.refresh()
 
             // Event trigger
-            pane._element.trigger(Event.HIDDEN)
+            pane.element.trigger(Event.HIDDEN)
             if (pane._manager.config('debug')) {
               console.debug('Triggered event:', Event.HIDDEN)
             }
@@ -360,7 +375,7 @@ const PaneManager = (($) => {
     _events() {
       let pane = this
 
-      this._element
+      this.element
           // Dismiss
           .off(Event.CLICK_DISMISS, Selector.DATA_DISMISS)
           .on(Event.CLICK_DISMISS,
@@ -447,15 +462,15 @@ const PaneManager = (($) => {
       toggle = typeof toggle === 'boolean' ? toggle : true
 
       if (toggle) {
-        let $loader = $(Selector.LOADER, this._element)
+        let $loader = $(Selector.LOADER, this.element)
 
         if ($loader.length === 0) {
           $loader = $('<div class="pane-loader"></div>')
           $loader.append(this._manager.config('loader'))
-          $(this._element).prepend($loader)
+          $(this.element).prepend($loader)
         }
       } else {
-        $(Selector.LOADER, this._element).remove()
+        $(Selector.LOADER, this.element).remove()
       }
     }
 
@@ -467,7 +482,7 @@ const PaneManager = (($) => {
       let pane = this
 
       // Event trigger
-      pane._element.trigger(Event.LOADING)
+      pane.element.trigger(Event.LOADING)
       if (pane._manager.config('debug')) {
         console.debug('Triggered event:', Event.LOADING)
       }
@@ -484,7 +499,7 @@ const PaneManager = (($) => {
 
           let eventLoaded = $.Event(Event.LOADED,
                                     {
-                                      pane: pane._element,
+                                      pane: pane,
                                       paneAjax: {
                                         data: data,
                                         textStatus: textStatus,
@@ -494,19 +509,19 @@ const PaneManager = (($) => {
                                     })
 
           // Event trigger
-          pane._element.trigger(eventLoaded)
+          pane.element.trigger(eventLoaded)
           if (pane._manager.config('debug')) {
             console.debug('Triggered event:', Event.LOADED)
           }
 
           if (!eventLoaded.isPropagationStopped()) {
             if (fragments) {
-              $(fragments, pane._element).first().html($(jqXHR.responseText).find(fragments).html())
+              $(fragments, pane.element).first().html($(jqXHR.responseText).find(fragments).html())
             } else {
-              pane._element.html(jqXHR.responseText)
+              pane.element.html(jqXHR.responseText)
             }
 
-            pane._element.trigger(Event.PRINTED, pane._element)
+            pane.element.trigger(Event.PRINTED, pane.element)
             if (pane._manager.config('debug')) {
               console.debug('Triggered event:', Event.PRINTED)
             }
@@ -518,7 +533,7 @@ const PaneManager = (($) => {
 
           let eventLoadingError = $.Event(Event.LOADING_ERROR,
                                           {
-                                            pane: pane._element,
+                                            pane: pane,
                                             paneAjax: {
                                               textStatus: textStatus,
                                               jqXHR: jqXHR,
@@ -527,7 +542,7 @@ const PaneManager = (($) => {
                                           })
 
           // Event trigger
-          pane._element.trigger(eventLoadingError)
+          pane.element.trigger(eventLoadingError)
           if (pane._manager.config('debug')) {
             console.debug('Triggered event:', Event.LOADING_ERROR)
           }

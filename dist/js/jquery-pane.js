@@ -194,15 +194,8 @@
         }
       }, {
         key: "new",
-        value: function _new(paneClass) {
-          var pane = new Pane(this);
-          pane.open(paneClass || '');
-          return pane;
-        }
-      }, {
-        key: "newStatic",
-        value: function newStatic(element, href) {
-          return new Pane(this, element, href);
+        value: function _new() {
+          return new Pane(this);
         } // Private
 
       }, {
@@ -239,9 +232,11 @@
 
 
           if (!pane) {
-            pane = this["new"]($(relatedTarget).data('paneClass') || '');
+            pane = this["new"]();
           }
 
+          pane.relatedTarget = relatedTarget;
+          pane.open();
           pane.load(href, $(relatedTarget).data('paneLoadOptions'));
           return pane;
         }
@@ -263,9 +258,7 @@
             } // Internet explorer
 
 
-            if (!this._wrapper.hasClass('pane-ie') && GetIEVersion() > 0) {
-              this._wrapper.addClass('pane-ie');
-            }
+            this._wrapper.toggleClass('pane-ie', GetIEVersion() > 0);
           }
 
           return this._wrapper;
@@ -282,34 +275,23 @@
     var Pane =
     /*#__PURE__*/
     function () {
-      function Pane(paneManager, element, href) {
+      function Pane(paneManager) {
         _classCallCheck(this, Pane);
 
         this._manager = paneManager;
         this._jqXHR = null;
         this._isTransitioning = false;
-        this._isStatic = true;
-        this._element = null;
-        this._href = href || null;
-        this._loadOptions = {}; // if no element given in argument
-
-        this._element = element;
-
-        if (!this._element) {
-          this._element = $('<div role="complementary" class="pane"></div>');
-          this._isStatic = false;
-        }
-
-        this._element.data('pane', this);
-
-        this._events();
+        this._isStatic = false;
+        this._relatedTarget = null;
+        this._href = null;
+        this._loadOptions = {};
       } // Getters
 
 
       _createClass(Pane, [{
         key: "open",
         // Public
-        value: function open(className) {
+        value: function open() {
           if (this._isStatic) {
             return;
           }
@@ -318,38 +300,36 @@
             return;
           }
 
-          var pane = this; // Size?
+          var pane = this; // Event trigger
 
-          if (typeof className === 'string') {
-            pane._element.addClass(className);
-          }
-
-          this._isTransitioning = true;
-
-          this._manager.wrapper.prepend(this._element);
-
-          this._manager.refresh(); // Event trigger
-
-
-          pane._element.trigger(Event.SHOW);
+          var eventShow = $.Event(Event.SHOW, {
+            pane: pane
+          });
+          pane.element.trigger(eventShow);
 
           if (pane._manager.config('debug')) {
             console.debug('Triggered event:', Event.SHOW);
-          } // Animation
+          }
+
+          if (!eventShow.isPropagationStopped()) {
+            this._isTransitioning = true;
+
+            this._manager.wrapper.prepend(this.element);
+
+            this._manager.refresh(); // Animation
 
 
-          setTimeout(function () {
-            pane._element.addClass('is-visible'); // Event trigger
+            setTimeout(function () {
+              pane.element.addClass('is-visible');
+              pane._isTransitioning = false; // Event trigger
 
+              pane.element.trigger(Event.SHOWN);
 
-            pane._element.trigger(Event.SHOWN);
-
-            if (pane._manager.config('debug')) {
-              console.debug('Triggered event:', Event.SHOWN);
-            }
-
-            pane._isTransitioning = false;
-          }, 50);
+              if (pane._manager.config('debug')) {
+                console.debug('Triggered event:', Event.SHOWN);
+              }
+            }, 50);
+          }
         }
       }, {
         key: "reload",
@@ -364,7 +344,7 @@
           } // Set to private properties
 
 
-          this._href = href;
+          this._href = href.toString();
 
           if (_typeof(loadOptions) === 'object') {
             this._loadOptions = loadOptions;
@@ -390,10 +370,9 @@
               manager = this._manager; // Event trigger
 
           var eventClose = $.Event(Event.HIDE, {
-            pane: pane._element
+            pane: pane.element
           });
-
-          pane._element.trigger(eventClose);
+          pane.element.trigger(eventClose);
 
           if (pane._manager.config('debug')) {
             console.debug('Triggered event:', Event.HIDE);
@@ -402,16 +381,13 @@
           if (!eventClose.isPropagationStopped()) {
             // Animation
             this._isTransitioning = true;
-
-            pane._element.removeClass('is-visible'); // After animation
-
+            pane.element.removeClass('is-visible'); // After animation
 
             setTimeout(function () {
-              pane._element.remove();
-
+              pane.element.remove();
               manager.refresh(); // Event trigger
 
-              pane._element.trigger(Event.HIDDEN);
+              pane.element.trigger(Event.HIDDEN);
 
               if (pane._manager.config('debug')) {
                 console.debug('Triggered event:', Event.HIDDEN);
@@ -426,8 +402,7 @@
         key: "_events",
         value: function _events() {
           var pane = this;
-
-          this._element // Dismiss
+          this.element // Dismiss
           .off(Event.CLICK_DISMISS, Selector.DATA_DISMISS).on(Event.CLICK_DISMISS, Selector.DATA_DISMISS, function (event) {
             event.preventDefault();
             pane.close();
@@ -495,15 +470,15 @@
           toggle = typeof toggle === 'boolean' ? toggle : true;
 
           if (toggle) {
-            var $loader = $(Selector.LOADER, this._element);
+            var $loader = $(Selector.LOADER, this.element);
 
             if ($loader.length === 0) {
               $loader = $('<div class="pane-loader"></div>');
               $loader.append(this._manager.config('loader'));
-              $(this._element).prepend($loader);
+              $(this.element).prepend($loader);
             }
           } else {
-            $(Selector.LOADER, this._element).remove();
+            $(Selector.LOADER, this.element).remove();
           }
         }
       }, {
@@ -515,7 +490,7 @@
 
           var pane = this; // Event trigger
 
-          pane._element.trigger(Event.LOADING);
+          pane.element.trigger(Event.LOADING);
 
           if (pane._manager.config('debug')) {
             console.debug('Triggered event:', Event.LOADING);
@@ -533,7 +508,7 @@
               pane._loader(false);
 
               var eventLoaded = $.Event(Event.LOADED, {
-                pane: pane._element,
+                pane: pane,
                 paneAjax: {
                   data: data,
                   textStatus: textStatus,
@@ -542,7 +517,7 @@
                 }
               }); // Event trigger
 
-              pane._element.trigger(eventLoaded);
+              pane.element.trigger(eventLoaded);
 
               if (pane._manager.config('debug')) {
                 console.debug('Triggered event:', Event.LOADED);
@@ -550,12 +525,12 @@
 
               if (!eventLoaded.isPropagationStopped()) {
                 if (fragments) {
-                  $(fragments, pane._element).first().html($(jqXHR.responseText).find(fragments).html());
+                  $(fragments, pane.element).first().html($(jqXHR.responseText).find(fragments).html());
                 } else {
-                  pane._element.html(jqXHR.responseText);
+                  pane.element.html(jqXHR.responseText);
                 }
 
-                pane._element.trigger(Event.PRINTED, pane._element);
+                pane.element.trigger(Event.PRINTED, pane.element);
 
                 if (pane._manager.config('debug')) {
                   console.debug('Triggered event:', Event.PRINTED);
@@ -568,7 +543,7 @@
               pane._loader(false);
 
               var eventLoadingError = $.Event(Event.LOADING_ERROR, {
-                pane: pane._element,
+                pane: pane,
                 paneAjax: {
                   textStatus: textStatus,
                   jqXHR: jqXHR,
@@ -576,7 +551,7 @@
                 }
               }); // Event trigger
 
-              pane._element.trigger(eventLoadingError);
+              pane.element.trigger(eventLoadingError);
 
               if (pane._manager.config('debug')) {
                 console.debug('Triggered event:', Event.LOADING_ERROR);
@@ -591,11 +566,49 @@
           this._jqXHR = $.ajax(options);
         }
       }, {
+        key: "relatedTarget",
+        get: function get() {
+          return this._relatedTarget;
+        },
+        // Setters
+        set: function set(relatedTarget) {
+          this._relatedTarget = relatedTarget;
+        }
+      }, {
+        key: "element",
+        get: function get() {
+          if (!this._element) {
+            // Default element
+            this._element = $('<div role="complementary" class="pane"></div>');
+
+            this._element.data('pane', this);
+
+            this._events();
+          }
+
+          return this._element;
+        },
+        set: function set(element) {
+          this._element = element;
+          this._isStatic = true;
+
+          this._element.data('pane', this);
+
+          this._events();
+        }
+      }, {
+        key: "static",
+        get: function get() {
+          return this._isStatic;
+        },
+        set: function set(isStatic) {
+          this._isStatic = isStatic === true;
+        }
+      }, {
         key: "location",
         get: function get() {
           return new URL(this._href, document.location.toString());
-        } // Setters
-        ,
+        },
         set: function set(location) {
           this._href = location.toString();
         }
