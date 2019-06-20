@@ -300,7 +300,11 @@
             return;
           }
 
-          var pane = this; // Event trigger
+          var pane = this;
+          this._isTransitioning = true;
+
+          this._manager.wrapper.prepend(this.element); // Event trigger
+
 
           var eventShow = $.Event(Event.SHOW, {
             pane: pane
@@ -312,10 +316,6 @@
           }
 
           if (!eventShow.isPropagationStopped()) {
-            this._isTransitioning = true;
-
-            this._manager.wrapper.prepend(this.element);
-
             this._manager.refresh(); // Animation
 
 

@@ -271,6 +271,8 @@ const PaneManager = (($) => {
       }
 
       let pane = this
+      this._isTransitioning = true
+      this._manager.wrapper.prepend(this.element)
 
       // Event trigger
       let eventShow = $.Event(Event.SHOW, {pane: pane})
@@ -280,8 +282,6 @@ const PaneManager = (($) => {
       }
 
       if (!eventShow.isPropagationStopped()) {
-        this._isTransitioning = true
-        this._manager.wrapper.prepend(this.element)
         this._manager.refresh()
 
         // Animation
