@@ -59,8 +59,6 @@ const PaneManager = (($) => {
 
   const Event = {
     // Pane
-    CREATION: 'creation.pane',
-    CREATED: 'created.pane',
     SHOW: 'show.pane',
     SHOWN: 'shown.pane',
     HIDE: 'hide.pane',
