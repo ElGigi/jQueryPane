@@ -59,6 +59,8 @@ const PaneManager = (($) => {
 
   const Event = {
     // Pane
+    CREATION: 'creation.pane',
+    CREATED: 'created.pane',
     SHOW: 'show.pane',
     SHOWN: 'shown.pane',
     HIDE: 'hide.pane',
@@ -354,9 +356,6 @@ const PaneManager = (($) => {
         // After animation
         setTimeout(
           function () {
-            pane.element.remove()
-            manager.refresh()
-
             // Event trigger
             pane.element.trigger(Event.HIDDEN)
             if (pane._manager.config('debug')) {
@@ -364,6 +363,8 @@ const PaneManager = (($) => {
             }
 
             pane._isTransitioning = false
+            pane.element.remove()
+            manager.refresh()
           },
           400
         )
