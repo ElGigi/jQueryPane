@@ -417,6 +417,7 @@ const PaneManager = (($) => {
                   typeof $form.get(0).checkValidity !== 'function' ||
                   $form.get(0).checkValidity()) {
                   // Get data of form
+                  let bodyHttpRequest = $.inArray(($(this).attr('method') || 'get').toLowerCase(), ['post', 'put', 'connect', 'patch']) !== -1
                   let formData = pane._serializeForm($form)
 
                   // Add button to form data
@@ -424,12 +425,21 @@ const PaneManager = (($) => {
                     formData.append(submitButton.name, submitButton.value)
                   }
 
+                  // Convert to JSON if no body request
+                  if (!bodyHttpRequest) {
+                    let formDataTmp = []
+                    formData.forEach((value, name) => {
+                      formDataTmp.push({name: name, value: value})
+                    })
+                    formData = formDataTmp
+                  }
+
                   // Form submission
                   pane._ajax({
                                url: $(this).attr('action') || pane._href,
                                method: $(this).attr('method') || 'get',
-                               processData: false,
-                               contentType: false,
+                               processData: !bodyHttpRequest,
+                               contentType: bodyHttpRequest ? false : 'text/plain',
                                data: formData,
                                dataType: 'json'
                              })
@@ -441,7 +451,8 @@ const PaneManager = (($) => {
     }
 
     _serializeForm(form) {
-      var formData = new FormData(),
+      let
+        formData = new FormData(),
         formParams = form.serializeArray()
 
       $.each(form.find('input[type="file"]'), function (i, tag) {

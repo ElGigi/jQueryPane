@@ -66,12 +66,13 @@
     var keys = Object.keys(object);
 
     if (Object.getOwnPropertySymbols) {
-      keys.push.apply(keys, Object.getOwnPropertySymbols(object));
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
     }
 
-    if (enumerableOnly) keys = keys.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
     return keys;
   }
 
@@ -441,19 +442,33 @@
 
             if (submitButton && submitButton.novalidate || typeof $form.get(0).checkValidity !== 'function' || $form.get(0).checkValidity()) {
               // Get data of form
+              var bodyHttpRequest = $.inArray(($(this).attr('method') || 'get').toLowerCase(), ['post', 'put', 'connect', 'patch']) !== -1;
+
               var formData = pane._serializeForm($form); // Add button to form data
 
 
               if (submitButton) {
                 formData.append(submitButton.name, submitButton.value);
+              } // Convert to JSON if no body request
+
+
+              if (!bodyHttpRequest) {
+                var formDataTmp = [];
+                formData.forEach(function (value, name) {
+                  formDataTmp.push({
+                    name: name,
+                    value: value
+                  });
+                });
+                formData = formDataTmp;
               } // Form submission
 
 
               pane._ajax({
                 url: $(this).attr('action') || pane._href,
                 method: $(this).attr('method') || 'get',
-                processData: false,
-                contentType: false,
+                processData: !bodyHttpRequest,
+                contentType: bodyHttpRequest ? false : 'text/plain',
                 data: formData,
                 dataType: 'json'
               }); // Remove submit button reference
