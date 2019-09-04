@@ -369,6 +369,22 @@ const PaneManager = (($) => {
       }
     }
 
+    loader(toggle) {
+      toggle = typeof toggle === 'boolean' ? toggle : true
+
+      if (toggle) {
+        let $loader = $(Selector.LOADER, this.element)
+
+        if ($loader.length === 0) {
+          $loader = $('<div class="pane-loader"></div>')
+          $loader.append(this._manager.config('loader'))
+          $(this.element).prepend($loader)
+        }
+      } else {
+        $(Selector.LOADER, this.element).remove()
+      }
+    }
+
     // Private
 
     _events() {
@@ -468,22 +484,6 @@ const PaneManager = (($) => {
       return formData
     }
 
-    _loader(toggle) {
-      toggle = typeof toggle === 'boolean' ? toggle : true
-
-      if (toggle) {
-        let $loader = $(Selector.LOADER, this.element)
-
-        if ($loader.length === 0) {
-          $loader = $('<div class="pane-loader"></div>')
-          $loader.append(this._manager.config('loader'))
-          $(this.element).prepend($loader)
-        }
-      } else {
-        $(Selector.LOADER, this.element).remove()
-      }
-    }
-
     _ajax(options, fragments) {
       if (this._jqXHR) {
         return
@@ -496,7 +496,7 @@ const PaneManager = (($) => {
       if (pane._manager.config('debug')) {
         console.debug('Triggered event:', Event.LOADING)
       }
-      pane._loader(true)
+      pane.loader(true)
 
       // Ajax options
       options = {
@@ -505,7 +505,7 @@ const PaneManager = (($) => {
         ...options,
         success: function (data, textStatus, jqXHR) {
           pane._jqXHR = null
-          pane._loader(false)
+          pane.loader(false)
 
           let eventLoaded = $.Event(Event.LOADED,
                                     {
@@ -539,7 +539,7 @@ const PaneManager = (($) => {
         },
         error: function (jqXHR, textStatus, errorThrown) {
           pane._jqXHR = null
-          pane._loader(false)
+          pane.loader(false)
 
           let eventLoadingError = $.Event(Event.LOADING_ERROR,
                                           {
@@ -580,6 +580,7 @@ const PaneManager = (($) => {
             case 'close':
             case 'load':
             case 'reload':
+            case 'loader':
               pane[action](arg1, arg2)
               break
             default:

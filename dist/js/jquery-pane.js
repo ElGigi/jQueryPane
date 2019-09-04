@@ -411,6 +411,23 @@
               manager.refresh();
             }, 400);
           }
+        }
+      }, {
+        key: "loader",
+        value: function loader(toggle) {
+          toggle = typeof toggle === 'boolean' ? toggle : true;
+
+          if (toggle) {
+            var $loader = $(Selector.LOADER, this.element);
+
+            if ($loader.length === 0) {
+              $loader = $('<div class="pane-loader"></div>');
+              $loader.append(this._manager.config('loader'));
+              $(this.element).prepend($loader);
+            }
+          } else {
+            $(Selector.LOADER, this.element).remove();
+          }
         } // Private
 
       }, {
@@ -494,23 +511,6 @@
           return formData;
         }
       }, {
-        key: "_loader",
-        value: function _loader(toggle) {
-          toggle = typeof toggle === 'boolean' ? toggle : true;
-
-          if (toggle) {
-            var $loader = $(Selector.LOADER, this.element);
-
-            if ($loader.length === 0) {
-              $loader = $('<div class="pane-loader"></div>');
-              $loader.append(this._manager.config('loader'));
-              $(this.element).prepend($loader);
-            }
-          } else {
-            $(Selector.LOADER, this.element).remove();
-          }
-        }
-      }, {
         key: "_ajax",
         value: function _ajax(options, fragments) {
           if (this._jqXHR) {
@@ -525,17 +525,14 @@
             console.debug('Triggered event:', Event.LOADING);
           }
 
-          pane._loader(true); // Ajax options
-
+          pane.loader(true); // Ajax options
 
           options = _objectSpread2({
             method: 'get'
           }, this._manager.config('ajax'), {}, options, {
             success: function success(data, textStatus, jqXHR) {
               pane._jqXHR = null;
-
-              pane._loader(false);
-
+              pane.loader(false);
               var eventLoaded = $.Event(Event.LOADED, {
                 pane: pane,
                 paneAjax: {
@@ -568,9 +565,7 @@
             },
             error: function error(jqXHR, textStatus, errorThrown) {
               pane._jqXHR = null;
-
-              pane._loader(false);
-
+              pane.loader(false);
               var eventLoadingError = $.Event(Event.LOADING_ERROR, {
                 pane: pane,
                 paneAjax: {
@@ -656,6 +651,7 @@
                 case 'close':
                 case 'load':
                 case 'reload':
+                case 'loader':
                   pane[action](arg1, arg2);
                   break;
 
