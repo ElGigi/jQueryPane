@@ -7,7 +7,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jquery')) :
   typeof define === 'function' && define.amd ? define(['jquery'], factory) :
   (global = global || self, global.Pane = factory(global.jQuery));
-}(this, function ($) { 'use strict';
+}(this, (function ($) { 'use strict';
 
   $ = $ && $.hasOwnProperty('default') ? $['default'] : $;
 
@@ -133,11 +133,11 @@
       transitionInTime: 50,
       transitionOutTime: 400,
       ajax: {}
-      /**
-       * Events
-       */
-
     };
+    /**
+     * Events
+     */
+
     var Event = {
       // Pane
       SHOW: 'show.pane',
@@ -154,11 +154,11 @@
       CLICK_DISMISS: 'click.dismiss.pane',
       CLICK_DATA_API: 'click.pane',
       SUBMIT_DATA_API: 'submit.pane'
-      /**
-       * SELECTORS
-       */
-
     };
+    /**
+     * SELECTORS
+     */
+
     var Selector = {
       WRAPPER: '.pane-wrapper:first',
       LOADER: '.pane-loader',
@@ -168,11 +168,10 @@
       SUBMIT: 'form:not([target]) :submit[name]',
       DATA_TOGGLE: '[data-toggle="pane"]',
       DATA_DISMISS: '[data-dismiss="pane"]'
-      /**
-       * PaneManager
-       */
-
     };
+    /**
+     * PaneManager
+     */
 
     var PaneManager =
     /*#__PURE__*/
@@ -330,7 +329,7 @@
             console.debug('Triggered event:', Event.SHOW);
           }
 
-          if (!eventShow.isPropagationStopped()) {
+          if (!eventShow.isDefaultPrevented()) {
             this._manager.refresh(); // Animation
 
 
@@ -393,7 +392,7 @@
             console.debug('Triggered event:', Event.HIDE);
           }
 
-          if (!eventClose.isPropagationStopped()) {
+          if (!eventClose.isDefaultPrevented()) {
             // Animation
             this._isTransitioning = true;
             pane.element.removeClass('is-visible'); // After animation
@@ -549,7 +548,7 @@
                 console.debug('Triggered event:', Event.LOADED);
               }
 
-              if (!eventLoaded.isPropagationStopped()) {
+              if (!eventLoaded.isDefaultPrevented()) {
                 if (fragments) {
                   $(fragments, pane.element).first().html($(jqXHR.responseText).find(fragments).html());
                 } else {
@@ -581,12 +580,12 @@
                 console.debug('Triggered event:', Event.LOADING_ERROR);
               }
 
-              if (!eventLoadingError.isPropagationStopped()) {
+              if (!eventLoadingError.isDefaultPrevented()) {
                 pane.close();
               }
-            } // Ajax
+            }
+          }); // Ajax
 
-          });
           this._jqXHR = $.ajax(options);
         }
       }, {
@@ -680,5 +679,5 @@
 
   return PaneManager;
 
-}));
+})));
 //# sourceMappingURL=jquery-pane.js.map

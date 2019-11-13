@@ -281,7 +281,7 @@ const PaneManager = (($) => {
         console.debug('Triggered event:', Event.SHOW)
       }
 
-      if (!eventShow.isPropagationStopped()) {
+      if (!eventShow.isDefaultPrevented()) {
         this._manager.refresh()
 
         // Animation
@@ -346,7 +346,7 @@ const PaneManager = (($) => {
         console.debug('Triggered event:', Event.HIDE)
       }
 
-      if (!eventClose.isPropagationStopped()) {
+      if (!eventClose.isDefaultPrevented()) {
         // Animation
         this._isTransitioning = true
         pane.element.removeClass('is-visible')
@@ -524,7 +524,7 @@ const PaneManager = (($) => {
             console.debug('Triggered event:', Event.LOADED)
           }
 
-          if (!eventLoaded.isPropagationStopped()) {
+          if (!eventLoaded.isDefaultPrevented()) {
             if (fragments) {
               $(fragments, pane.element).first().html($(jqXHR.responseText).find(fragments).html())
             } else {
@@ -557,7 +557,7 @@ const PaneManager = (($) => {
             console.debug('Triggered event:', Event.LOADING_ERROR)
           }
 
-          if (!eventLoadingError.isPropagationStopped()) {
+          if (!eventLoadingError.isDefaultPrevented()) {
             pane.close()
           }
         }
