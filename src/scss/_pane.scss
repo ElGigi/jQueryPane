@@ -33,7 +33,7 @@
     &__title {
       margin-bottom: 0;
       padding: $pane-header-height / 2 0;
-      font-size: 1.5rem;
+      font-size: $pane-header-font-size;
       line-height: $pane-header-height / 2;
       text-overflow: ellipsis;
     }
