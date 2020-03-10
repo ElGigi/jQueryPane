@@ -46,11 +46,11 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
     "node-sass": "^4.13.1",
-    "rollup": "^1.31.1",
-    "rollup-plugin-babel": "^4.3.3",
-    "uglify-js": "^3.7.7"
+    "rollup": "^1.32.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "uglify-js": "^3.8.0"
   }
 }
