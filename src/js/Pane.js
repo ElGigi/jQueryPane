@@ -11,12 +11,12 @@
  * file that was distributed with this source code, to the root.
  */
 
-import $ from 'jquery'
+import $ from 'jquery';
 
 const PaneManager = (($) => {
   // Check jQuery requirements
   if (typeof $ === 'undefined') {
-    throw new TypeError('jQuery Pane requires jQuery. jQuery must be included before.')
+    throw new TypeError('jQuery Pane requires jQuery. jQuery must be included before.');
   }
 
   /**
@@ -25,8 +25,8 @@ const PaneManager = (($) => {
    * @return {number}
    */
   function GetIEVersion() {
-    let sAgent = window.navigator.userAgent
-    let Idx = sAgent.indexOf("MSIE")
+    let sAgent = window.navigator.userAgent;
+    let Idx = sAgent.indexOf("MSIE");
 
     // If IE, return version number.
     if (Idx > 0) {
@@ -51,7 +51,7 @@ const PaneManager = (($) => {
     transitionInTime: 50,
     transitionOutTime: 400,
     ajax: {},
-  }
+  };
 
   /**
    * Events
@@ -64,6 +64,7 @@ const PaneManager = (($) => {
     HIDE: 'hide.pane',
     HIDDEN: 'hidden.pane',
     // Pane content
+    RELOAD: 'reload.content.pane',
     LOADING: 'loading.content.pane',
     LOADED: 'loaded.content.pane',
     LOADING_ERROR: 'error.content.pane',
@@ -73,7 +74,7 @@ const PaneManager = (($) => {
     CLICK_DISMISS: 'click.dismiss.pane',
     CLICK_DATA_API: 'click.pane',
     SUBMIT_DATA_API: 'submit.pane',
-  }
+  };
 
   /**
    * SELECTORS
@@ -88,16 +89,16 @@ const PaneManager = (($) => {
     SUBMIT: 'form:not([target]) :submit[name]',
     DATA_TOGGLE: '[data-toggle="pane"]',
     DATA_DISMISS: '[data-dismiss="pane"]',
-  }
+  };
 
   /**
    * PaneManager
    */
   class PaneManager {
     constructor(config) {
-      this._config = this._getConfig(config)
-      this._wrapper = null
-      this._events()
+      this._config = this._getConfig(config);
+      this._wrapper = null;
+      this._events();
 
       // Debug
       if (this.config('debug')) {
@@ -109,10 +110,10 @@ const PaneManager = (($) => {
 
     get wrapper() {
       if (!this._wrapper) {
-        this._wrapper = $(Selector.WRAPPER)
+        this._wrapper = $(Selector.WRAPPER);
 
         if (this._wrapper.length === 0) {
-          this._wrapper = $('<div class="pane-wrapper"></div>')
+          this._wrapper = $('<div class="pane-wrapper"></div>');
           $(this._config.container).append(this._wrapper)
         }
 
@@ -144,32 +145,32 @@ const PaneManager = (($) => {
     // Private
 
     _events() {
-      let manager = this
+      let manager = this;
 
       $(document)
         .off(Event.CLICK_DATA_API, Selector.DATA_TOGGLE)
         .on(Event.CLICK_DATA_API,
-            Selector.DATA_TOGGLE,
-            function (event) {
-              event.preventDefault()
-              event.stopPropagation()
+          Selector.DATA_TOGGLE,
+          function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
-              // Debug
-              if (manager.config('debug')) {
-                console.debug('Selector', Selector.DATA_TOGGLE, 'has been clicked')
-              }
+            // Debug
+            if (manager.config('debug')) {
+              console.debug('Selector', Selector.DATA_TOGGLE, 'has been clicked')
+            }
 
-              manager._pane(this)
-            })
+            manager._pane(this)
+          })
     }
 
     _pane(relatedTarget) {
       let pane = null,
         href = $(relatedTarget).data('href') || $(relatedTarget).attr('href'),
-        target = $(relatedTarget).data('paneTarget') || ''
+        target = $(relatedTarget).data('paneTarget') || '';
 
       if (!href) {
-        console.error('Pane has no href to load content')
+        console.error('Pane has no href to load content');
         return
       }
 
@@ -182,9 +183,9 @@ const PaneManager = (($) => {
       if (!pane) {
         pane = this.new()
       }
-      pane.relatedTarget = relatedTarget
-      pane.open()
-      pane.load(href, $(relatedTarget).data('paneLoadOptions'))
+      pane.relatedTarget = relatedTarget;
+      pane.open();
+      pane.load(href, $(relatedTarget).data('paneLoadOptions'));
 
       return pane
     }
@@ -193,7 +194,7 @@ const PaneManager = (($) => {
       config = {
         ...Default,
         ...config
-      }
+      };
 
       return config
     }
@@ -204,13 +205,13 @@ const PaneManager = (($) => {
    */
   class Pane {
     constructor(paneManager) {
-      this._manager = paneManager
-      this._jqXHR = null
-      this._isTransitioning = false
-      this._isStatic = false
-      this._relatedTarget = null
-      this._href = null
-      this._loadOptions = {}
+      this._manager = paneManager;
+      this._jqXHR = null;
+      this._isTransitioning = false;
+      this._isStatic = false;
+      this._relatedTarget = null;
+      this._href = null;
+      this._loadOptions = {};
     }
 
     // Getters
@@ -222,8 +223,8 @@ const PaneManager = (($) => {
     get element() {
       if (!this._element) {
         // Default element
-        this._element = $('<div role="complementary" class="pane"></div>')
-        this._element.data('pane', this)
+        this._element = $('<div role="complementary" class="pane"></div>');
+        this._element.data('pane', this);
         this._events()
       }
 
@@ -245,9 +246,9 @@ const PaneManager = (($) => {
     }
 
     set element(element) {
-      this._element = element
-      this._isStatic = true
-      this._element.data('pane', this)
+      this._element = element;
+      this._isStatic = true;
+      this._element.data('pane', this);
       this._events()
     }
 
@@ -270,29 +271,29 @@ const PaneManager = (($) => {
         return
       }
 
-      let pane = this
-      this._isTransitioning = true
-      this._manager.wrapper.prepend(this.element)
+      let pane = this;
+      this._isTransitioning = true;
+      this._manager.wrapper.prepend(this.element);
 
       // Event trigger
-      let eventShow = $.Event(Event.SHOW, {pane: pane})
-      pane.element.trigger(eventShow)
+      let eventShow = $.Event(Event.SHOW, {pane: pane});
+      pane.element.trigger(eventShow);
       if (pane._manager.config('debug')) {
-        console.debug('Triggered event:', Event.SHOW)
+        console.debug('Triggered event:', Event.SHOW);
       }
 
       if (!eventShow.isDefaultPrevented()) {
-        this._manager.refresh()
+        this._manager.refresh();
 
         // Animation
         setTimeout(
           function () {
-            pane.element.addClass('is-visible')
+            pane.element.addClass('is-visible');
 
-            pane._isTransitioning = false
+            pane._isTransitioning = false;
 
             // Event trigger
-            pane.element.trigger(Event.SHOWN)
+            pane.element.trigger(Event.SHOWN);
             if (pane._manager.config('debug')) {
               console.debug('Triggered event:', Event.SHOWN)
             }
@@ -303,7 +304,18 @@ const PaneManager = (($) => {
     }
 
     reload(fragments) {
-      this.load(this._href, null, fragments)
+      let pane = this;
+
+      // Event trigger
+      let eventReload = $.Event(Event.RELOAD, {pane: pane});
+      pane.element.trigger(eventReload);
+      if (pane._manager.config('debug')) {
+        console.debug('Triggered event:', Event.RELOAD);
+      }
+
+      if (!eventReload.isDefaultPrevented()) {
+        this.load(this._href, null, fragments)
+      }
     }
 
     load(href, loadOptions, fragments) {
@@ -312,7 +324,7 @@ const PaneManager = (($) => {
       }
 
       // Set to private properties
-      this._href = href.toString()
+      this._href = href.toString();
       if (typeof loadOptions === 'object') {
         this._loadOptions = loadOptions
       }
@@ -337,31 +349,31 @@ const PaneManager = (($) => {
       }
 
       let pane = this,
-        manager = this._manager
+        manager = this._manager;
 
       // Event trigger
-      let eventClose = $.Event(Event.HIDE, {pane: pane.element})
-      pane.element.trigger(eventClose)
+      let eventClose = $.Event(Event.HIDE, {pane: pane.element});
+      pane.element.trigger(eventClose);
       if (pane._manager.config('debug')) {
         console.debug('Triggered event:', Event.HIDE)
       }
 
       if (!eventClose.isDefaultPrevented()) {
         // Animation
-        this._isTransitioning = true
-        pane.element.removeClass('is-visible')
+        this._isTransitioning = true;
+        pane.element.removeClass('is-visible');
 
         // After animation
         setTimeout(
           function () {
             // Event trigger
-            pane.element.trigger(Event.HIDDEN)
+            pane.element.trigger(Event.HIDDEN);
             if (pane._manager.config('debug')) {
               console.debug('Triggered event:', Event.HIDDEN)
             }
 
-            pane._isTransitioning = false
-            pane.element.remove()
+            pane._isTransitioning = false;
+            pane.element.remove();
             manager.refresh()
           },
           400
@@ -370,14 +382,14 @@ const PaneManager = (($) => {
     }
 
     loader(toggle) {
-      toggle = typeof toggle === 'boolean' ? toggle : true
+      toggle = typeof toggle === 'boolean' ? toggle : true;
 
       if (toggle) {
-        let $loader = $(Selector.LOADER, this.element)
+        let $loader = $(Selector.LOADER, this.element);
 
         if ($loader.length === 0) {
-          $loader = $('<div class="pane-loader"></div>')
-          $loader.append(this._manager.config('loader'))
+          $loader = $('<div class="pane-loader"></div>');
+          $loader.append(this._manager.config('loader'));
           $(this.element).prepend($loader)
         }
       } else {
@@ -388,98 +400,98 @@ const PaneManager = (($) => {
     // Private
 
     _events() {
-      let pane = this
+      let pane = this;
 
       this.element
-          // Dismiss
-          .off(Event.CLICK_DISMISS, Selector.DATA_DISMISS)
-          .on(Event.CLICK_DISMISS,
-              Selector.DATA_DISMISS,
-              function (event) {
-                event.preventDefault()
+        // Dismiss
+        .off(Event.CLICK_DISMISS, Selector.DATA_DISMISS)
+        .on(Event.CLICK_DISMISS,
+          Selector.DATA_DISMISS,
+          function (event) {
+            event.preventDefault();
 
-                pane.close()
+            pane.close()
+          })
+        // Submit buttons
+        .off(Event.CLICK_DATA_API, Selector.SUBMIT)
+        .on(Event.CLICK_DATA_API,
+          Selector.SUBMIT,
+          function () {
+            let $form = $(this).parents('form');
+
+            $form.data('submitButton',
+              {
+                'name': $(this).attr('name'),
+                'value': $(this).val(),
+                'novalidate': ($(this).attr('formnovalidate') !== undefined)
               })
-          // Submit buttons
-          .off(Event.CLICK_DATA_API, Selector.SUBMIT)
-          .on(Event.CLICK_DATA_API,
-              Selector.SUBMIT,
-              function () {
-                let $form = $(this).parents('form')
+          })
+        // Submit form
+        .off(Event.SUBMIT_DATA_API, Selector.FORM)
+        .on(Event.SUBMIT_DATA_API,
+          Selector.FORM,
+          function (event) {
+            event.preventDefault();
 
-                $form.data('submitButton',
-                           {
-                             'name': $(this).attr('name'),
-                             'value': $(this).val(),
-                             'novalidate': ($(this).attr('formnovalidate') !== undefined)
-                           })
-              })
-          // Submit form
-          .off(Event.SUBMIT_DATA_API, Selector.FORM)
-          .on(Event.SUBMIT_DATA_API,
-              Selector.FORM,
-              function (event) {
-                event.preventDefault()
+            let $form = $(this);
 
-                let $form = $(this)
+            // Submit button
+            let submitButton = null;
+            if ($.isPlainObject($form.data('submitButton'))) {
+              submitButton = $form.data('submitButton')
+            }
 
-                // Submit button
-                let submitButton = null
-                if ($.isPlainObject($form.data('submitButton'))) {
-                  submitButton = $form.data('submitButton')
-                }
+            if ((submitButton && submitButton.novalidate) ||
+              typeof $form.get(0).checkValidity !== 'function' ||
+              $form.get(0).checkValidity()) {
+              // Get data of form
+              let bodyHttpRequest = $.inArray(($(this).attr('method') || 'get').toLowerCase(), ['post', 'put', 'connect', 'patch']) !== -1;
+              let formData = pane._serializeForm($form);
 
-                if ((submitButton && submitButton.novalidate) ||
-                  typeof $form.get(0).checkValidity !== 'function' ||
-                  $form.get(0).checkValidity()) {
-                  // Get data of form
-                  let bodyHttpRequest = $.inArray(($(this).attr('method') || 'get').toLowerCase(), ['post', 'put', 'connect', 'patch']) !== -1
-                  let formData = pane._serializeForm($form)
+              // Add button to form data
+              if (submitButton) {
+                formData.append(submitButton.name, submitButton.value)
+              }
 
-                  // Add button to form data
-                  if (submitButton) {
-                    formData.append(submitButton.name, submitButton.value)
-                  }
+              // Convert to JSON if no body request
+              if (!bodyHttpRequest) {
+                let formDataTmp = [];
+                formData.forEach((value, name) => {
+                  formDataTmp.push({name: name, value: value})
+                });
+                formData = formDataTmp
+              }
 
-                  // Convert to JSON if no body request
-                  if (!bodyHttpRequest) {
-                    let formDataTmp = []
-                    formData.forEach((value, name) => {
-                      formDataTmp.push({name: name, value: value})
-                    })
-                    formData = formDataTmp
-                  }
+              // Form submission
+              pane._ajax({
+                url: $(this).attr('action') || pane._href,
+                method: $(this).attr('method') || 'get',
+                processData: !bodyHttpRequest,
+                contentType: bodyHttpRequest ? false : 'text/plain',
+                data: formData,
+                dataType: 'json'
+              });
 
-                  // Form submission
-                  pane._ajax({
-                               url: $(this).attr('action') || pane._href,
-                               method: $(this).attr('method') || 'get',
-                               processData: !bodyHttpRequest,
-                               contentType: bodyHttpRequest ? false : 'text/plain',
-                               data: formData,
-                               dataType: 'json'
-                             })
-
-                  // Remove submit button reference
-                  $form.removeData('submitButton')
-                }
-              })
+              // Remove submit button reference
+              $form.removeData('submitButton')
+            }
+          })
     }
 
     _serializeForm(form) {
       let
         formData = new FormData(),
-        formParams = form.serializeArray()
+        formParams = form.serializeArray();
 
       $.each(form.find('input[type="file"]'), function (i, tag) {
         $.each($(tag)[0].files, function (i, file) {
           formData.append(tag.name, file)
         })
-      })
+      });
 
       $.each(formParams, function (i, val) {
         formData.append(val.name, val.value)
-      })
+      });
 
       return formData
     }
@@ -489,14 +501,14 @@ const PaneManager = (($) => {
         return
       }
 
-      let pane = this
+      let pane = this;
 
       // Event trigger
-      pane.element.trigger(Event.LOADING)
+      pane.element.trigger(Event.LOADING);
       if (pane._manager.config('debug')) {
         console.debug('Triggered event:', Event.LOADING)
       }
-      pane.loader(true)
+      pane.loader(true);
 
       // Ajax options
       options = {
@@ -504,22 +516,22 @@ const PaneManager = (($) => {
         ...this._manager.config('ajax'),
         ...options,
         success: function (data, textStatus, jqXHR) {
-          pane._jqXHR = null
-          pane.loader(false)
+          pane._jqXHR = null;
+          pane.loader(false);
 
           let eventLoaded = $.Event(Event.LOADED,
-                                    {
-                                      pane: pane,
-                                      paneAjax: {
-                                        data: data,
-                                        textStatus: textStatus,
-                                        jqXHR: jqXHR,
-                                        fragments: fragments || null,
-                                      }
-                                    })
+            {
+              pane: pane,
+              paneAjax: {
+                data: data,
+                textStatus: textStatus,
+                jqXHR: jqXHR,
+                fragments: fragments || null,
+              }
+            });
 
           // Event trigger
-          pane.element.trigger(eventLoaded)
+          pane.element.trigger(eventLoaded);
           if (pane._manager.config('debug')) {
             console.debug('Triggered event:', Event.LOADED)
           }
@@ -531,28 +543,28 @@ const PaneManager = (($) => {
               pane.element.html(jqXHR.responseText)
             }
 
-            pane.element.trigger(Event.PRINTED, pane.element)
+            pane.element.trigger(Event.PRINTED, pane.element);
             if (pane._manager.config('debug')) {
               console.debug('Triggered event:', Event.PRINTED)
             }
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          pane._jqXHR = null
-          pane.loader(false)
+          pane._jqXHR = null;
+          pane.loader(false);
 
           let eventLoadingError = $.Event(Event.LOADING_ERROR,
-                                          {
-                                            pane: pane,
-                                            paneAjax: {
-                                              textStatus: textStatus,
-                                              jqXHR: jqXHR,
-                                              errorThrown: errorThrown,
-                                            }
-                                          })
+            {
+              pane: pane,
+              paneAjax: {
+                textStatus: textStatus,
+                jqXHR: jqXHR,
+                errorThrown: errorThrown,
+              }
+            });
 
           // Event trigger
-          pane.element.trigger(eventLoadingError)
+          pane.element.trigger(eventLoadingError);
           if (pane._manager.config('debug')) {
             console.debug('Triggered event:', Event.LOADING_ERROR)
           }
@@ -561,7 +573,7 @@ const PaneManager = (($) => {
             pane.close()
           }
         }
-      }
+      };
 
       // Ajax
       this._jqXHR = $.ajax(options)
@@ -574,15 +586,15 @@ const PaneManager = (($) => {
         }
 
         if (typeof action === 'string') {
-          let pane = $(this).data('pane')
+          let pane = $(this).data('pane');
 
           switch (action) {
             case 'close':
             case 'load':
             case 'reload':
             case 'loader':
-              pane[action](arg1, arg2)
-              break
+              pane[action](arg1, arg2);
+              break;
             default:
               throw new TypeError(`No method named "${action}"`)
           }
@@ -592,14 +604,14 @@ const PaneManager = (($) => {
   }
 
   // jQuery
-  $.fn['pane'] = Pane._jQueryInterface
+  $.fn['pane'] = Pane._jQueryInterface;
   $.fn['pane'].noConflict = function () {
     return Pane._jQueryInterface
-  }
+  };
 
   return function (config) {
     return new PaneManager(config)
   }
-})($)
+})($);
 
 export default PaneManager
