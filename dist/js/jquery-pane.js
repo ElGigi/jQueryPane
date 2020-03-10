@@ -9,7 +9,7 @@
   (global = global || self, global.Pane = factory(global.jQuery));
 }(this, (function ($) { 'use strict';
 
-  $ = $ && $.hasOwnProperty('default') ? $['default'] : $;
+  $ = $ && Object.prototype.hasOwnProperty.call($, 'default') ? $['default'] : $;
 
   function _typeof(obj) {
     "@babel/helpers - typeof";
@@ -147,6 +147,7 @@
       HIDE: 'hide.pane',
       HIDDEN: 'hidden.pane',
       // Pane content
+      RELOAD: 'reload.content.pane',
       LOADING: 'loading.content.pane',
       LOADED: 'loaded.content.pane',
       LOADING_ERROR: 'error.content.pane',
@@ -175,9 +176,7 @@
      * PaneManager
      */
 
-    var PaneManager =
-    /*#__PURE__*/
-    function () {
+    var PaneManager = /*#__PURE__*/function () {
       function PaneManager(config) {
         _classCallCheck(this, PaneManager);
 
@@ -288,9 +287,7 @@
      */
 
 
-    var Pane =
-    /*#__PURE__*/
-    function () {
+    var Pane = /*#__PURE__*/function () {
       function Pane(paneManager) {
         _classCallCheck(this, Pane);
 
@@ -350,7 +347,20 @@
       }, {
         key: "reload",
         value: function reload(fragments) {
-          this.load(this._href, null, fragments);
+          var pane = this; // Event trigger
+
+          var eventReload = $.Event(Event.RELOAD, {
+            pane: pane
+          });
+          pane.element.trigger(eventReload);
+
+          if (pane._manager.config('debug')) {
+            console.debug('Triggered event:', Event.RELOAD);
+          }
+
+          if (!eventReload.isDefaultPrevented()) {
+            this.load(this._href, null, fragments);
+          }
         }
       }, {
         key: "load",
