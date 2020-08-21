@@ -522,6 +522,7 @@ const PaneManager = (($) => {
                     let eventLoaded = $.Event(Event.LOADED,
                         {
                             pane: pane,
+                            url: options.url,
                             paneAjax: {
                                 data: data,
                                 textStatus: textStatus,
