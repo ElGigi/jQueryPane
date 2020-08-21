@@ -258,7 +258,7 @@
       }, {
         key: "_getConfig",
         value: function _getConfig(config) {
-          config = _objectSpread2({}, Default, {}, config);
+          config = _objectSpread2(_objectSpread2({}, Default), config);
           return config;
         }
       }, {
@@ -350,7 +350,8 @@
           var pane = this; // Event trigger
 
           var eventReload = $.Event(Event.RELOAD, {
-            pane: pane
+            pane: pane,
+            url: this._href
           });
           pane.element.trigger(eventReload);
 
@@ -538,9 +539,9 @@
 
           pane.loader(true); // Ajax options
 
-          options = _objectSpread2({
+          options = _objectSpread2(_objectSpread2(_objectSpread2({
             method: 'get'
-          }, this._manager.config('ajax'), {}, options, {
+          }, this._manager.config('ajax')), options), {}, {
             success: function success(data, textStatus, jqXHR) {
               pane._jqXHR = null;
               pane.loader(false);
