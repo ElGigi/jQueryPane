@@ -271,6 +271,11 @@ const PaneManager = (($) => {
                 return
             }
 
+            // Already opened?
+            if (this._manager.wrapper.find(this.element).length > 0) {
+                return
+            }
+
             let pane = this;
             this._isTransitioning = true;
             this._manager.wrapper.prepend(this.element);
