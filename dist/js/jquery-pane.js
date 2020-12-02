@@ -311,6 +311,11 @@
 
           if (this._isTransitioning) {
             return;
+          } // Already opened?
+
+
+          if (this._manager.wrapper.find(this.element).length > 0) {
+            return;
           }
 
           var pane = this;
@@ -529,15 +534,7 @@
             return;
           }
 
-          var pane = this; // Event trigger
-
-          pane.element.trigger(Event.LOADING);
-
-          if (pane._manager.config('debug')) {
-            console.debug('Triggered event:', Event.LOADING);
-          }
-
-          pane.loader(true); // Ajax options
+          var pane = this; // Ajax options
 
           options = _objectSpread2(_objectSpread2(_objectSpread2({
             method: 'get'
@@ -598,7 +595,19 @@
                 pane.close();
               }
             }
-          }); // Ajax
+          }); // Event trigger
+
+          pane.element.trigger($.Event(Event.LOADING, {
+            pane: pane,
+            url: options.url
+          }));
+
+          if (pane._manager.config('debug')) {
+            console.debug('Triggered event:', Event.LOADING);
+          } // Loader
+
+
+          pane.loader(true); // Ajax
 
           this._jqXHR = $.ajax(options);
         }
