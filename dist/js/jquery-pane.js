@@ -1,15 +1,55 @@
 /*!
-  * jQuery Pane v1.0.0-alpha.4 (https://github.com/ElGigi/jQueryPane#readme)
+  * jQuery Pane v1.0.0-beta.1 (https://github.com/ElGigi/jQueryPane#readme)
   * Copyright 2018 jQuery Pane Authors (https://github.com/ElGigi/jQueryPane/graphs/contributors)
   * Licensed under MIT (https://github.com/ElGigi/jQueryPane/blob/master/LICENSE)
   */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jquery')) :
   typeof define === 'function' && define.amd ? define(['jquery'], factory) :
-  (global = global || self, global.Pane = factory(global.jQuery));
-}(this, (function ($) { 'use strict';
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Pane = factory(global.jQuery));
+})(this, (function ($) { 'use strict';
 
-  $ = $ && Object.prototype.hasOwnProperty.call($, 'default') ? $['default'] : $;
+  function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+  var $__default = /*#__PURE__*/_interopDefaultLegacy($);
+
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+
+      if (enumerableOnly) {
+        symbols = symbols.filter(function (sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        });
+      }
+
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
+  }
 
   function _typeof(obj) {
     "@babel/helpers - typeof";
@@ -64,40 +104,6 @@
     return obj;
   }
 
-  function ownKeys(object, enumerableOnly) {
-    var keys = Object.keys(object);
-
-    if (Object.getOwnPropertySymbols) {
-      var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly) symbols = symbols.filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-      keys.push.apply(keys, symbols);
-    }
-
-    return keys;
-  }
-
-  function _objectSpread2(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-
-      if (i % 2) {
-        ownKeys(Object(source), true).forEach(function (key) {
-          _defineProperty(target, key, source[key]);
-        });
-      } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-      } else {
-        ownKeys(Object(source)).forEach(function (key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-        });
-      }
-    }
-
-    return target;
-  }
-
   var PaneManager = function ($) {
     // Check jQuery requirements
     if (typeof $ === 'undefined') {
@@ -118,10 +124,10 @@
         return parseInt(sAgent.substring(Idx + 5, sAgent.indexOf(".", Idx)));
       } // If IE 11 then look for Updated user agent string.
       else if (!!navigator.userAgent.match(/Trident\/7\./)) {
-          return 11;
-        } else {
-          return 0; //It is not IE
-        }
+        return 11;
+      } else {
+        return 0; //It is not IE
+      }
     }
     /**
      * Defaults
@@ -193,8 +199,25 @@
 
 
       _createClass(PaneManager, [{
+        key: "wrapper",
+        get: function get() {
+          if (!this._wrapper) {
+            this._wrapper = $(Selector.WRAPPER);
+
+            if (this._wrapper.length === 0) {
+              this._wrapper = $('<div class="pane-wrapper"></div>');
+              $(this._config.container).append(this._wrapper);
+            } // Internet explorer
+
+
+            this._wrapper.toggleClass('pane-ie', GetIEVersion() > 0);
+          }
+
+          return this._wrapper;
+        } // Public
+
+      }, {
         key: "refresh",
-        // Public
         value: function refresh() {
           this._wrapper.toggleClass('is-open', $(Selector.PANE_NOT_STATIC, this._wrapper).length > 0);
         }
@@ -261,23 +284,6 @@
           config = _objectSpread2(_objectSpread2({}, Default), config);
           return config;
         }
-      }, {
-        key: "wrapper",
-        get: function get() {
-          if (!this._wrapper) {
-            this._wrapper = $(Selector.WRAPPER);
-
-            if (this._wrapper.length === 0) {
-              this._wrapper = $('<div class="pane-wrapper"></div>');
-              $(this._config.container).append(this._wrapper);
-            } // Internet explorer
-
-
-            this._wrapper.toggleClass('pane-ie', GetIEVersion() > 0);
-          }
-
-          return this._wrapper;
-        }
       }]);
 
       return PaneManager;
@@ -302,8 +308,55 @@
 
 
       _createClass(Pane, [{
+        key: "relatedTarget",
+        get: function get() {
+          return this._relatedTarget;
+        },
+        set: // Setters
+        function set(relatedTarget) {
+          this._relatedTarget = relatedTarget;
+        }
+      }, {
+        key: "element",
+        get: function get() {
+          if (!this._element) {
+            // Default element
+            this._element = $('<div role="complementary" class="pane"></div>');
+
+            this._element.data('pane', this);
+
+            this._events();
+          }
+
+          return this._element;
+        },
+        set: function set(element) {
+          this._element = element;
+          this._isStatic = true;
+
+          this._element.data('pane', this);
+
+          this._events();
+        }
+      }, {
+        key: "static",
+        get: function get() {
+          return this._isStatic;
+        },
+        set: function set(isStatic) {
+          this._isStatic = isStatic === true;
+        }
+      }, {
+        key: "location",
+        get: function get() {
+          return new URL(this._href, document.location.toString());
+        },
+        set: function set(location) {
+          this._href = location.toString();
+        } // Public
+
+      }, {
         key: "open",
-        // Public
         value: function open() {
           if (this._isStatic) {
             return;
@@ -611,53 +664,6 @@
 
           this._jqXHR = $.ajax(options);
         }
-      }, {
-        key: "relatedTarget",
-        get: function get() {
-          return this._relatedTarget;
-        },
-        // Setters
-        set: function set(relatedTarget) {
-          this._relatedTarget = relatedTarget;
-        }
-      }, {
-        key: "element",
-        get: function get() {
-          if (!this._element) {
-            // Default element
-            this._element = $('<div role="complementary" class="pane"></div>');
-
-            this._element.data('pane', this);
-
-            this._events();
-          }
-
-          return this._element;
-        },
-        set: function set(element) {
-          this._element = element;
-          this._isStatic = true;
-
-          this._element.data('pane', this);
-
-          this._events();
-        }
-      }, {
-        key: "static",
-        get: function get() {
-          return this._isStatic;
-        },
-        set: function set(isStatic) {
-          this._isStatic = isStatic === true;
-        }
-      }, {
-        key: "location",
-        get: function get() {
-          return new URL(this._href, document.location.toString());
-        },
-        set: function set(location) {
-          this._href = location.toString();
-        }
       }], [{
         key: "_jQueryInterface",
         value: function _jQueryInterface(action, arg1, arg2) {
@@ -698,9 +704,9 @@
     return function (config) {
       return new PaneManager(config);
     };
-  }($);
+  }($__default["default"]);
 
   return PaneManager;
 
-})));
+}));
 //# sourceMappingURL=jquery-pane.js.map
