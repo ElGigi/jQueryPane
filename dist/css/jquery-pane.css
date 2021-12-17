@@ -28,7 +28,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code, to the root.
- */.pane{display:block;padding:0 1.5rem;overflow-y:auto;background-color:#eee}.pane .pane-header{display:flex;align-items:center;position:sticky;top:0;z-index:100;height:4rem;margin:0 -1.5rem 1.5rem;padding:0 1.5rem;background-color:white}.pane .pane-header__title{margin-bottom:0;padding:2rem 0;font-size:1.5rem;line-height:2rem;text-overflow:ellipsis}/*!
+ */.pane{display:block;padding:0 1.5rem;overflow-y:auto;background-color:#eee}.pane .pane-header{display:flex;align-items:center;position:sticky;top:0;z-index:100;height:4rem;margin:0 -1.5rem 1.5rem;padding:0 1.5rem;background-color:#fff}.pane .pane-header__title{margin-bottom:0;padding:2rem 0;font-size:1.5rem;line-height:2rem;text-overflow:ellipsis}/*!
  * This file is part of jQuery Pane.
  *
  * @license   https://opensource.org/licenses/MIT MIT License
@@ -38,7 +38,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code, to the root.
- */.pane-wrapper{position:relative;z-index:1060}.pane-wrapper .pane.pane-static{z-index:0}.pane-wrapper .pane:not(.pane-static){position:fixed;z-index:4;top:0;bottom:0;left:0;min-height:1px;width:100%;overflow-x:hidden;box-shadow:0 0 10px -5px rgba(0,0,0,0.2),0 0 24px 2px rgba(0,0,0,0.14),0 0 30px 5px rgba(0,0,0,0.12);transform:translate(101vw);transition:transform .4s}@media (min-width: 768px){.pane-wrapper .pane:not(.pane-static){width:83.33333%}}.pane-wrapper .pane:not(.pane-static):first-child{z-index:5}.pane-wrapper .pane:not(.pane-static).is-visible{transform:translate(calc(100vw - 100%))}.pane-wrapper .pane:not(.pane-static).is-visible+.is-visible{transform:translate(0);z-index:2}.pane-wrapper .pane:not(.pane-static).is-visible:nth-child(n+3){z-index:1;overflow:hidden;pointer-events:none}.pane-wrapper::before{content:'';display:block;position:fixed;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);background:black;visibility:hidden;z-index:3}.pane-wrapper.is-open::before{opacity:.3;visibility:visible}.pane-wrapper.pane-ie .pane.is-visible{transform:none;top:0;right:0;bottom:0;left:inherit}/*!
+ */.pane-wrapper{position:relative;z-index:1060}.pane-wrapper .pane.pane-static{z-index:0}.pane-wrapper .pane:not(.pane-static){position:fixed;z-index:4;top:0;bottom:0;left:0;min-height:1px;width:100%;overflow-x:hidden;box-shadow:0 0 10px -5px rgba(0,0,0,.2),0 0 24px 2px rgba(0,0,0,.14),0 0 30px 5px rgba(0,0,0,.12);transform:translate(101vw);transition:transform .4s}@media(min-width: 768px){.pane-wrapper .pane:not(.pane-static){width:83.33333%}}.pane-wrapper .pane:not(.pane-static):first-child{z-index:5}.pane-wrapper .pane:not(.pane-static).is-visible{transform:translate(calc(100vw - 100%))}.pane-wrapper .pane:not(.pane-static).is-visible+.is-visible{transform:translate(0);z-index:2}.pane-wrapper .pane:not(.pane-static).is-visible:nth-child(n+3){z-index:1;overflow:hidden;pointer-events:none}.pane-wrapper::before{content:"";display:block;position:fixed;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity .3s cubic-bezier(0.25, 0.8, 0.25, 1);background:#000;visibility:hidden;z-index:3}.pane-wrapper.is-open::before{opacity:.3;visibility:visible}.pane-wrapper.pane-ie .pane.is-visible{transform:none;top:0;right:0;bottom:0;left:inherit}/*!
  * This file is part of jQuery Pane.
  *
  * @license   https://opensource.org/licenses/MIT MIT License
@@ -48,7 +48,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code, to the root.
- */.pane-loader{margin:100px auto;width:40px;height:40px;position:absolute;top:31%;left:50%;text-align:center;z-index:1060;-webkit-animation:sk-rotate 2.0s infinite linear;animation:sk-rotate 2.0s infinite linear}.pane-loader::before,.pane-loader::after{content:'';width:30px;height:30px;display:inline-block;position:absolute;top:0;background-color:#333;border-radius:100%;-webkit-animation:sk-bounce 2.0s infinite ease-in-out;animation:sk-bounce 2.0s infinite ease-in-out}.pane-loader::after{top:auto;bottom:-10px;-webkit-animation-delay:-1.0s;animation-delay:-1.0s}@-webkit-keyframes sk-rotate{100%{-webkit-transform:rotate(360deg)}}@keyframes sk-rotate{100%{transform:rotate(360deg);-webkit-transform:rotate(360deg)}}@-webkit-keyframes sk-bounce{0%,100%{-webkit-transform:scale(0)}50%{-webkit-transform:scale(1)}}@keyframes sk-bounce{0%,100%{transform:scale(0);-webkit-transform:scale(0)}50%{transform:scale(1);-webkit-transform:scale(1)}}/*!
+ */.pane-loader{margin:100px auto;width:40px;height:40px;position:absolute;top:31%;left:50%;text-align:center;z-index:1060;-webkit-animation:sk-rotate 2s infinite linear;animation:sk-rotate 2s infinite linear}.pane-loader::before,.pane-loader::after{content:"";width:30px;height:30px;display:inline-block;position:absolute;top:0;background-color:#333;border-radius:100%;-webkit-animation:sk-bounce 2s infinite ease-in-out;animation:sk-bounce 2s infinite ease-in-out}.pane-loader::after{top:auto;bottom:-10px;-webkit-animation-delay:-1s;animation-delay:-1s}@-webkit-keyframes sk-rotate{100%{-webkit-transform:rotate(360deg)}}@keyframes sk-rotate{100%{transform:rotate(360deg);-webkit-transform:rotate(360deg)}}@-webkit-keyframes sk-bounce{0%,100%{-webkit-transform:scale(0)}50%{-webkit-transform:scale(1)}}@keyframes sk-bounce{0%,100%{transform:scale(0);-webkit-transform:scale(0)}50%{transform:scale(1);-webkit-transform:scale(1)}}/*!
  * This file is part of jQuery Pane.
  *
  * @license   https://opensource.org/licenses/MIT MIT License
@@ -58,6 +58,4 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code, to the root.
- */[data-toggle="pane"],[data-dismiss="pane"]{cursor:pointer}
-
-/*# sourceMappingURL=jquery-pane.css.map */
+ */[data-toggle=pane],[data-dismiss=pane]{cursor:pointer}/*# sourceMappingURL=jquery-pane.css.map */

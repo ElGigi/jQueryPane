@@ -1,4 +1,4 @@
-import babel from 'rollup-plugin-babel'
+import babel from '@rollup/plugin-babel'
 
 const path = require('path');
 const pkg = require(path.resolve(__dirname, 'package.json'))
