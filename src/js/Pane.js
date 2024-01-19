@@ -451,8 +451,8 @@ const PaneManager = (($) => {
                             $form.get(0).checkValidity()) {
                             // Get data of form
                             let bodyHttpRequest = $.inArray(($(this).attr('method') || 'get').toLowerCase(), ['post', 'put', 'connect', 'patch']) !== -1;
-                            let formData =  new FormData($form[0]);
-                          
+                            let formData = new FormData($form[0]);
+
                             // Add button to form data
                             if (submitButton) {
                                 formData.append(submitButton.name, submitButton.value)
@@ -482,7 +482,7 @@ const PaneManager = (($) => {
                         }
                     })
         }
-      
+
         _ajax(options, fragments) {
             if (this._jqXHR) {
                 return
