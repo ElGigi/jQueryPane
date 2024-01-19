@@ -516,7 +516,7 @@
               // Get data of form
               var bodyHttpRequest = $.inArray(($(this).attr('method') || 'get').toLowerCase(), ['post', 'put', 'connect', 'patch']) !== -1;
 
-              var formData = pane._serializeForm($form); // Add button to form data
+              var formData = new FormData($form[0]); // Add button to form data
 
 
               if (submitButton) {
@@ -549,21 +549,6 @@
               $form.removeData('submitButton');
             }
           });
-        }
-      }, {
-        key: "_serializeForm",
-        value: function _serializeForm(form) {
-          var formData = new FormData(),
-              formParams = form.serializeArray();
-          $.each(form.find('input[type="file"]'), function (i, tag) {
-            $.each($(tag)[0].files, function (i, file) {
-              formData.append(tag.name, file);
-            });
-          });
-          $.each(formParams, function (i, val) {
-            formData.append(val.name, val.value);
-          });
-          return formData;
         }
       }, {
         key: "_ajax",
